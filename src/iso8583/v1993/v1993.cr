@@ -1,0 +1,8 @@
+require "./dictionary"
+require "./message"
+require "./messages/auth_request"
+require "./messages/auth_response"
+require "./messages/auth_advice"
+require "./messages/auth_advice_response"
+require "./parser"
+require "./serializer"

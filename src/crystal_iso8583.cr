@@ -1,4 +1,1 @@
-require "./bitmap"
-require "./field"
-require "./message"
-require "./parser"
+require "./iso8583/iso8583"
