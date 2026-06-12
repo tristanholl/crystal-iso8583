@@ -1,4 +1,4 @@
-.PHONY: help build dev test lint shards console reset env
+.PHONY: help build dev test lint shards console reset env docker-info test-clean
 
 IMAGE_NAME := crystal-iso8583
 IMAGE_TAG  := dev
@@ -49,3 +49,10 @@ console: build ## Open bash console in container
 reset: ## Remove image and rebuild from scratch
 	docker rmi -f $(FULL_IMAGE) || true
 	$(MAKE) build
+
+docker-info: ## Print Docker and Docker Compose version info
+	docker -v
+	docker-compose -v
+
+test-clean: ## Tear down test containers and volumes
+	$(call dct, down --remove-orphans -v)
