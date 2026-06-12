@@ -5,6 +5,6 @@ description: Crystal implementation of the ISO 8583 financial transaction messag
 authors:
   - tristanholl
 
-crystal: ">= 1.9.0"
+crystal: ">= 1.14.0"
 
 license: MIT

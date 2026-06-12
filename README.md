@@ -10,6 +10,7 @@ ISO 8583 is the international standard for financial transaction card-originated
 - Primary and secondary bitmap support (fields 1–128)
 - Fixed, LLVAR, and LLLVAR field encoding
 - Clean, zero-dependency Crystal library
+- Requires Crystal ≥ 1.14.0
 
 ## Installation
 
