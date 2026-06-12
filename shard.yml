@@ -1,0 +1,10 @@
+name: crystal_iso8583
+version: 0.1.0
+description: Crystal implementation of the ISO 8583 financial transaction message standard
+
+authors:
+  - tristanholl
+
+crystal: ">= 1.14.0"
+
+license: MIT
