@@ -1,0 +1,18 @@
+x-lib: &lib
+  image: crystal-iso8583:dev
+  volumes:
+    - .:/crystal-iso8583/lib
+
+services:
+  cmd:
+    <<: *lib
+    deploy:
+      replicas: 0
+    entrypoint: bash
+    command: ["-c", ""]
+
+  console:
+    <<: *lib
+    entrypoint: bash
+    stdin_open: true
+    tty: true

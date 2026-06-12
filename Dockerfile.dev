@@ -1,0 +1,12 @@
+FROM 84codes/crystal:1.19.1-ubuntu-22.04 AS base
+
+FROM base AS builder
+RUN mkdir -p /crystal-iso8583/lib
+WORKDIR /crystal-iso8583/lib
+COPY shard.yml .
+RUN shards install
+COPY . .
+
+FROM builder AS service
+ENV IMAGE_NAME=crystal-iso8583
+WORKDIR /crystal-iso8583/lib

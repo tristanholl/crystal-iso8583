@@ -1,0 +1,12 @@
+x-lib: &lib
+  platform: linux/amd64
+  image: crystal-iso8583:dev
+  env_file: .env-test
+
+services:
+  cmd:
+    <<: *lib
+    deploy:
+      replicas: 0
+    entrypoint: bash
+    command: ["-c", ""]
