@@ -12,10 +12,10 @@ module CrystalIso8583
       def self.parse(str : String) : MTI
         raise ArgumentError.new("MTI must be exactly 4 digits, got #{str.inspect}") unless str.size == 4 && str.each_char.all?(&.ascii_number?)
         new(
-          version:       str[0].to_i,
+          version: str[0].to_i,
           message_class: str[1].to_i,
-          function:      str[2].to_i,
-          originator:    str[3].to_i
+          function: str[2].to_i,
+          originator: str[3].to_i
         )
       end
 

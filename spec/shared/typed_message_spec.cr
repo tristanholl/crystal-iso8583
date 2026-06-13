@@ -4,7 +4,7 @@ require "../spec_helper"
 private class TestMsg < CrystalIso8583::Shared::TypedMessage
   mti "9999"
 
-  field iso002, id: 2, label: "PAN",             required: true
+  field iso002, id: 2, label: "PAN", required: true
   field iso003, id: 3, label: "Processing Code", required: true
   field iso004, id: 4, label: "Amount"
 end
@@ -57,8 +57,8 @@ describe CrystalIso8583::Shared::TypedMessage do
     end
 
     it "is isolated per class" do
-      test_meta  = TestMsg.new.field_meta
-      msg_meta   = CrystalIso8583::V1993::Msg1100.new.field_meta
+      test_meta = TestMsg.new.field_meta
+      msg_meta = CrystalIso8583::V1993::Msg1100.new.field_meta
       test_meta.should_not eq msg_meta
     end
   end

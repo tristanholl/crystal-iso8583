@@ -52,7 +52,7 @@ module CrystalIso8583
           .select { |_, meta| meta[:required] }
           .keys
           .reject { |id| @data.has_key?(id) }
-          .map    { |id| "#{id} (#{field_meta[id][:label]})" }
+          .map { |id| "#{id} (#{field_meta[id][:label]})" }
         raise BuildError.new("Missing required fields: #{missing.join(", ")}") unless missing.empty?
       end
 
