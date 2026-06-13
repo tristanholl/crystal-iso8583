@@ -14,12 +14,18 @@ describe CrystalIso8583::V1993::Msg1110 do
       msg.iso002.should eq "434971******1380"
     end
 
-    it "sets and gets response fields" do
+    it "sets and gets action code (3-digit) and approval code" do
       msg = CrystalIso8583::V1993::Msg1110.new
-      msg.iso039 = "00"
+      msg.iso039 = "000"
       msg.iso038 = "036246"
-      msg.iso039.should eq "00"
+      msg.iso039.should eq "000"
       msg.iso038.should eq "036246"
+    end
+
+    it "sets and gets card issuer reference data" do
+      msg = CrystalIso8583::V1993::Msg1110.new
+      msg.iso095 = "ISSUERREF001"
+      msg.iso095.should eq "ISSUERREF001"
     end
   end
 
@@ -30,19 +36,17 @@ describe CrystalIso8583::V1993::Msg1110 do
       end
     end
 
-    it "passes when iso003, iso004, iso039 are set" do
+    it "passes when iso007 and iso039 are set" do
       msg = CrystalIso8583::V1993::Msg1110.new
-      msg.iso003 = "000000"
-      msg.iso004 = "000000000100"
-      msg.iso039 = "00"
+      msg.iso007 = "0618120000"
+      msg.iso039 = "000"
       msg.validate!
     end
 
     it "does not require iso002 (PAN)" do
       msg = CrystalIso8583::V1993::Msg1110.new
-      msg.iso003 = "000000"
-      msg.iso004 = "000000000100"
-      msg.iso039 = "00"
+      msg.iso007 = "0618120000"
+      msg.iso039 = "000"
       msg.iso002.should be_nil
       msg.validate!
     end
