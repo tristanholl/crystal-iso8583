@@ -1,3 +1,5 @@
+require "json"
+
 module CrystalIso8583
   module Shared
     abstract class TypedMessage
@@ -72,6 +74,30 @@ module CrystalIso8583
           instance.set_raw_field(id, decoded.is_a?(String) ? decoded : decoded.to_s)
         end
         instance
+      end
+
+      def to_json : String
+        JSON.build do |json|
+          json.object do
+            json.field "mti", mti_string
+            json.field "fields" do
+              json.object do
+                @data.each do |id, value|
+                  json.field id.to_s do
+                    json.object do
+                      json.field "label", field_label(id)
+                      json.field "value", value
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+      protected def field_label(id : Int32) : String?
+        nil
       end
 
       protected def set_raw_field(id : Int32, value : String) : Nil

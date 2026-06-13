@@ -13,6 +13,10 @@ module CrystalIso8583
         raise Shared::BuildError.new("Missing required fields: #{missing.join(", ")}") unless missing.empty?
       end
 
+      protected def field_label(id : Int32) : String?
+        DataDictionary.fields[id]?.try(&.label)
+      end
+
       def build(codec : Shared::Codec) : Bytes
         build(codec, DataDictionary.fields)
       end
