@@ -3,11 +3,11 @@ module CrystalIso8583
     abstract class TypedMessage
       abstract def mti_string : String
 
-      # Each subclass gets its own FIELD_META hash and a field_meta accessor.
+      # Each subclass gets its own FIELD_META hash (field id → required?) and accessor.
       macro inherited
-        FIELD_META = {} of Int32 => NamedTuple(label: String, required: Bool)
+        FIELD_META = {} of Int32 => Bool
 
-        def field_meta : Hash(Int32, NamedTuple(label: String, required: Bool))
+        def field_meta : Hash(Int32, Bool)
           FIELD_META
         end
       end
@@ -21,8 +21,8 @@ module CrystalIso8583
 
       # Generates a typed getter and setter for a single ISO 8583 field.
       # Setter returns `self` so calls can be chained.
-      macro field(name, id, *, label = "", required = false)
-        FIELD_META[{{ id }}] = {label: {{ label }}, required: {{ required }}}
+      macro field(name, id, *, required = false)
+        FIELD_META[{{ id }}] = {{ required }}
 
         def {{ name.id }} : String?
           @data[{{ id }}]?
@@ -49,10 +49,10 @@ module CrystalIso8583
 
       def validate! : Nil
         missing = field_meta
-          .select { |_, meta| meta[:required] }
+          .select { |_, required| required }
           .keys
           .reject { |id| @data.has_key?(id) }
-          .map { |id| "#{id} (#{field_meta[id][:label]})" }
+          .map(&.to_s)
         raise BuildError.new("Missing required fields: #{missing.join(", ")}") unless missing.empty?
       end
 

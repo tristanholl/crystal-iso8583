@@ -3,9 +3,9 @@ require "../spec_helper"
 private class TestMsg < CrystalIso8583::Shared::TypedMessage
   mti "9999"
 
-  field iso002, id: 2, label: "PAN", required: true
-  field iso003, id: 3, label: "Processing Code", required: true
-  field iso004, id: 4, label: "Amount"
+  field iso002, id: 2, required: true
+  field iso003, id: 3, required: true
+  field iso004, id: 4
 end
 
 describe CrystalIso8583::Shared::TypedMessage do
@@ -47,18 +47,15 @@ describe CrystalIso8583::Shared::TypedMessage do
   end
 
   describe "field_meta" do
-    it "tracks declared fields with their metadata" do
+    it "tracks required status per field id" do
       meta = TestMsg.new.field_meta
-      meta[2][:label].should eq "PAN"
-      meta[2][:required].should be_true
-      meta[4][:label].should eq "Amount"
-      meta[4][:required].should be_false
+      meta[2].should be_true
+      meta[3].should be_true
+      meta[4].should be_false
     end
 
     it "is isolated per class" do
-      test_meta = TestMsg.new.field_meta
-      msg_meta = CrystalIso8583::V1993::Msg1100.new.field_meta
-      test_meta.should_not eq msg_meta
+      TestMsg.new.field_meta.should_not eq CrystalIso8583::V1993::Msg1100.new.field_meta
     end
   end
 
@@ -69,10 +66,9 @@ describe CrystalIso8583::Shared::TypedMessage do
   end
 
   describe "validate!" do
-    it "raises BuildError listing missing required fields" do
-      msg = TestMsg.new
+    it "raises BuildError when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do
-        msg.validate!
+        TestMsg.new.validate!
       end
     end
 
