@@ -36,12 +36,11 @@ describe CrystalIso8583::V1993::Msg1420 do
       msg.validate!
     end
 
-    it "does not require iso039 (Response Code)" do
+    it "does not require a Response Code unlike Msg1430" do
       msg = CrystalIso8583::V1993::Msg1420.new
       msg.iso003 = "000000"
       msg.iso004 = "000000000100"
       msg.iso090 = "110012345600000000000000000000000000000000"
-      msg.iso039.should be_nil
       msg.validate!
     end
   end

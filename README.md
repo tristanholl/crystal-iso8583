@@ -40,7 +40,7 @@ caught at compile time; missing required fields are caught when you call `build`
 ```crystal
 require "crystal_iso8583"
 
-codec = CrystalIso8583::Codec::ASCII.new
+codec = CrystalIso8583::Shared::Codec::ASCII.new
 
 # Build a 1100 authorization request
 bytes = CrystalIso8583::V1993::Msg1100.new.tap do |m|
@@ -54,7 +54,7 @@ end.build(codec)
 # Parse an incoming response
 response = CrystalIso8583::V1993::Msg1110.parse(bytes, codec)
 puts response.iso039  # Response Code
-puts response.iso038  # Authorization Code
+puts response.iso038  # Authorization ID Response
 ```
 
 ### Generic messages
@@ -66,15 +66,10 @@ When you need to work with arbitrary or unknown MTIs, use the lower-level
 require "crystal_iso8583"
 
 dict  = CrystalIso8583::V1993::DataDictionary.fields
-codec = CrystalIso8583::Codec::ASCII.new
+codec = CrystalIso8583::Shared::Codec::ASCII.new
 
-msg = CrystalIso8583::Message.new(
-  mti:    CrystalIso8583::MTI.parse("1100"),
-  fields: {2 => "434971******1380", 3 => "310000", 4 => "000000000000"}
-)
-
-bytes    = CrystalIso8583::Builder.new(dict, codec).build(msg)
-parsed   = CrystalIso8583::Parser.new(dict, codec).parse(bytes)
+bytes  = CrystalIso8583::Shared::Builder.new(dict, codec).build(message)
+parsed = CrystalIso8583::Shared::Parser.new(dict, codec).parse(bytes)
 puts parsed.fields[39]  # Response Code by field number
 ```
 
