@@ -10,7 +10,7 @@ module CrystalIso8583
           .keys
           .reject { |id| @data.has_key?(id) }
           .map { |id| dict[id]?.try { |f| "#{id} (#{f.label})" } || id.to_s }
-        raise BuildError.new("Missing required fields: #{missing.join(", ")}") unless missing.empty?
+        raise Shared::BuildError.new("Missing required fields: #{missing.join(", ")}") unless missing.empty?
       end
 
       def build(codec : Shared::Codec) : Bytes
