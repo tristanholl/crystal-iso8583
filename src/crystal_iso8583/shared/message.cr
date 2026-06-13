@@ -10,7 +10,7 @@ module CrystalIso8583
       def initialize(@mti, @bitmap, @fields)
       end
 
-      def to_json : String
+      def to_json(dictionary : Hash(Int32, FieldDescriptor)? = nil) : String
         JSON.build do |json|
           json.object do
             json.field "mti", mti.to_s
@@ -18,10 +18,15 @@ module CrystalIso8583
               json.object do
                 fields.each do |id, fv|
                   json.field id.to_s do
-                    case decoded = fv.decoded
-                    when String then json.string(decoded)
-                    when Int64  then json.number(decoded)
-                    when Bytes  then json.string(decoded.hexstring)
+                    json.object do
+                      json.field "label", dictionary.try { |d| d[id]?.try(&.label) }
+                      json.field "value" do
+                        case decoded = fv.decoded
+                        when String then json.string(decoded)
+                        when Int64  then json.number(decoded)
+                        when Bytes  then json.string(decoded.hexstring)
+                        end
+                      end
                     end
                   end
                 end

@@ -83,12 +83,21 @@ module CrystalIso8583
             json.field "fields" do
               json.object do
                 @data.each do |id, value|
-                  json.field id.to_s, value
+                  json.field id.to_s do
+                    json.object do
+                      json.field "label", field_label(id)
+                      json.field "value", value
+                    end
+                  end
                 end
               end
             end
           end
         end
+      end
+
+      protected def field_label(id : Int32) : String?
+        nil
       end
 
       protected def set_raw_field(id : Int32, value : String) : Nil
