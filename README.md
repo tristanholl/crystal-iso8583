@@ -1,5 +1,7 @@
 # crystal-iso8583
 
+[![CI](https://github.com/tristanholl/crystal-iso8583/actions/workflows/ci.yml/badge.svg)](https://github.com/tristanholl/crystal-iso8583/actions/workflows/ci.yml)
+
 A Crystal implementation of the ISO 8583 financial transaction message standard.
 
 ISO 8583 is the international standard for financial transaction card-originated messages. It defines a message format and a communication flow for systems that exchange electronic transactions made by cardholders using payment cards.
