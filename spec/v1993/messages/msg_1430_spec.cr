@@ -8,16 +8,16 @@ describe CrystalIso8583::V1993::Msg1430 do
   end
 
   describe "field accessors" do
-    it "sets and gets response code" do
+    it "sets and gets action code (3-digit)" do
       msg = CrystalIso8583::V1993::Msg1430.new
-      msg.iso039 = "40"
-      msg.iso039.should eq "40"
+      msg.iso039 = "400"
+      msg.iso039.should eq "400"
     end
 
-    it "sets and gets original data elements" do
+    it "sets and gets original data elements (BMP 56)" do
       msg = CrystalIso8583::V1993::Msg1430.new
-      msg.iso090 = "110012345600000000000000000000000000000000"
-      msg.iso090.should eq "110012345600000000000000000000000000000000"
+      msg.iso056 = "11001234562606181200000272001234"
+      msg.iso056.should eq "11001234562606181200000272001234"
     end
   end
 
@@ -28,20 +28,16 @@ describe CrystalIso8583::V1993::Msg1430 do
       end
     end
 
-    it "passes when iso003, iso004, iso039, iso090 are set" do
+    it "passes when iso007 and iso039 are set" do
       msg = CrystalIso8583::V1993::Msg1430.new
-      msg.iso003 = "000000"
-      msg.iso004 = "000000000100"
-      msg.iso039 = "40"
-      msg.iso090 = "110012345600000000000000000000000000000000"
+      msg.iso007 = "0618120000"
+      msg.iso039 = "400"
       msg.validate!
     end
 
-    it "requires iso039 unlike Msg1420" do
+    it "requires iso039 (Action Code)" do
       msg = CrystalIso8583::V1993::Msg1430.new
-      msg.iso003 = "000000"
-      msg.iso004 = "000000000100"
-      msg.iso090 = "110012345600000000000000000000000000000000"
+      msg.iso007 = "0618120000"
       expect_raises(CrystalIso8583::Shared::BuildError) do
         msg.validate!
       end

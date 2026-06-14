@@ -1,7 +1,10 @@
 module CrystalIso8583
   module V1993
-    class Msg1420 < TypedMessage
-      mti "1420"
+    # Reversal Advice Repeat — identical field set to Msg1420.
+    # Spec: "Advice Repeats are identical to the respective Advices with
+    # exception of the MTID and the values of BMP 53 and BMP 64 or BMP 128."
+    class Msg1421 < TypedMessage
+      mti "1421"
 
       field iso002, id: 2, required: true  # Primary Account Number (PAN) — R (repeated)
       field iso003, id: 3, required: true  # Processing Code — R (repeated)
