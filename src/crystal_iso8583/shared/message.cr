@@ -20,13 +20,7 @@ module CrystalIso8583
                   json.field id.to_s do
                     json.object do
                       json.field "label", dictionary.try { |d| d[id]?.try(&.label) }
-                      json.field "value" do
-                        case decoded = fv.decoded
-                        when String then json.string(decoded)
-                        when Int64  then json.number(decoded)
-                        when Bytes  then json.string(decoded.hexstring)
-                        end
-                      end
+                      json.field "value", fv.decoded
                     end
                   end
                 end

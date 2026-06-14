@@ -51,7 +51,7 @@ module CrystalIso8583
            40 => field_descriptor(40, fix, 3, ans, "Service Restriction Code"),
            41 => field_descriptor(41, fix, 8, ans, "Card Acceptor Terminal ID"),
            42 => field_descriptor(42, fix, 15, ans, "Card Acceptor ID Code"),
-           43 => field_descriptor(43, fix, 40, ans, "Card Acceptor Name/Location"),
+           43 => field_descriptor(43, ll,  40, ans, "Card Acceptor Name/Location"),
            44 => field_descriptor(44, ll, 25, ans, "Additional Response Data"),
            45 => field_descriptor(45, ll, 76, ans, "Track 1 Data"),
            46 => field_descriptor(46, lll, 999, ans, "Additional Data - ISO"),

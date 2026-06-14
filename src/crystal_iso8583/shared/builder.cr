@@ -17,15 +17,14 @@ module CrystalIso8583
           raise BuildError.new("Field #{field_id} not in dictionary") unless descriptor
 
           fv = message.fields[field_id]
+          str = fv.decoded
 
-          if (raw_data = fv.decoded).is_a?(Bytes)
-            write_field(io, raw_data, descriptor.encoding, raw_data.size)
+          if descriptor.data_type == DataType::B
+            raw = str.hexbytes
+            write_field(io, raw, descriptor.encoding, raw.size)
           else
-            str = fv.decoded.is_a?(String) ? fv.decoded.as(String) : fv.decoded.as(Int64).to_s
             encoded = @codec.encode_field(str, descriptor.data_type)
-            if descriptor.encoding == FieldEncoding::FIXED
-              encoded = pad_fixed(encoded, descriptor)
-            end
+            encoded = pad_fixed(encoded, descriptor) if descriptor.encoding == FieldEncoding::FIXED
             write_field(io, encoded, descriptor.encoding, str.size)
           end
         end

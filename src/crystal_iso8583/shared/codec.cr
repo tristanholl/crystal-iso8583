@@ -20,9 +20,10 @@ module CrystalIso8583
       # Encode a field value string using the codec rules for the given data type.
       abstract def encode_field(str : String, data_type : DataType) : Bytes
 
-      # Decode raw field bytes into a typed value.
+      # Decode raw field bytes into a String.
       # `length` is the logical field length (number of characters/digits), not the byte count.
-      abstract def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String | Int64 | Bytes
+      # Binary fields (DataType::B) are returned as lowercase hex strings.
+      abstract def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String
 
       # -----------------------------------------------------------------------
       # ASCII codec — all data as printable ASCII characters.
@@ -70,15 +71,10 @@ module CrystalIso8583
           str.to_slice
         end
 
-        def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String | Int64 | Bytes
+        def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String
           case data_type
-          when DataType::B
-            bytes.dup
-          when DataType::N
-            s = String.new(bytes)
-            s.to_i64? || s
-          else
-            String.new(bytes)
+          when DataType::B then bytes.hexstring
+          else                  String.new(bytes)
           end
         end
       end
@@ -135,15 +131,14 @@ module CrystalIso8583
           data_type == DataType::N ? pack_bcd(str) : str.to_slice
         end
 
-        def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String | Int64 | Bytes
+        def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String
           case data_type
           when DataType::B
-            bytes.dup
+            bytes.hexstring
           when DataType::N
             # Unpack and trim to `length` digits (packed form may have a leading zero nibble).
             unpacked = unpack_bcd(bytes)
-            s = unpacked.size > length ? unpacked[unpacked.size - length, length] : unpacked
-            s.to_i64? || s
+            unpacked.size > length ? unpacked[unpacked.size - length, length] : unpacked
           else
             String.new(bytes[0, length])
           end
@@ -211,15 +206,10 @@ module CrystalIso8583
           data_type == DataType::B ? str.to_slice : encode_string(str)
         end
 
-        def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String | Int64 | Bytes
+        def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String
           case data_type
-          when DataType::B
-            bytes.dup
-          when DataType::N
-            s = decode_string(bytes)
-            s.to_i64? || s
-          else
-            decode_string(bytes)
+          when DataType::B then bytes.hexstring
+          else                  decode_string(bytes)
           end
         end
       end
