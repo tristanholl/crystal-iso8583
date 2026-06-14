@@ -29,6 +29,7 @@ module CrystalIso8583
            26 => field_descriptor(26, fix, 4, n, "Card Acceptor Business Code"),
            30 => field_descriptor(30, fix, 24, n, "Amounts, Original"),
            32 => field_descriptor(32, ll, 11, n, "Acquiring Institution Identification Code"),
+           33 => field_descriptor(33, ll, 11, n, "Forwarding Institution Identification Code"),
            35 => field_descriptor(35, ll, 37, z, "Track 2 Data"),
            37 => field_descriptor(37, fix, 12, ans, "Retrieval Reference Number"),
            38 => field_descriptor(38, fix, 6, ans, "Authorization ID Response"),
