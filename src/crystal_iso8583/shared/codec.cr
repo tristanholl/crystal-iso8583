@@ -199,11 +199,12 @@ module CrystalIso8583
         end
 
         def encode_string(str : String) : Bytes
-          Bytes.new(str.bytesize) { |i| EBCDIC::TO_EBCDIC[str.to_slice[i]] }
+          slice = str.to_slice
+          Bytes.new(str.bytesize) { |i| Shared::EBCDIC::TO_EBCDIC[slice[i]] }
         end
 
         def decode_string(bytes : Bytes) : String
-          String.new(Bytes.new(bytes.size) { |i| EBCDIC::TO_ASCII[bytes[i]] })
+          String.new(Bytes.new(bytes.size) { |i| Shared::EBCDIC::TO_ASCII[bytes[i]] })
         end
 
         def encode_field(str : String, data_type : DataType) : Bytes
