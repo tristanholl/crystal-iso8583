@@ -7,7 +7,7 @@ module CrystalIso8583
       def parse(bytes : Bytes) : Message
         pos = 0
 
-        mti = @codec.decode_mti(bytes[pos, @codec.mti_byte_size])
+        mti = @codec.decode_mti(read_bytes(bytes, pos, @codec.mti_byte_size, "MTI"))
         pos += @codec.mti_byte_size
 
         bitmap, bitmap_size = Bitmap.decode(bytes[pos..])
@@ -24,12 +24,12 @@ module CrystalIso8583
                             descriptor.max_length
                           in FieldEncoding::LLVAR
                             ld = @codec.length_byte_size(2)
-                            len = @codec.decode_length(bytes[pos, ld], 2)
+                            len = @codec.decode_length(read_bytes(bytes, pos, ld, "LLVAR length prefix", field_id), 2)
                             pos += ld
                             len
                           in FieldEncoding::LLLVAR
                             ld = @codec.length_byte_size(3)
-                            len = @codec.decode_length(bytes[pos, ld], 3)
+                            len = @codec.decode_length(read_bytes(bytes, pos, ld, "LLLVAR length prefix", field_id), 3)
                             pos += ld
                             len
                           in FieldEncoding::LLLLVAR
@@ -40,7 +40,7 @@ module CrystalIso8583
                           end
 
           data_size = @codec.field_byte_size(actual_length, descriptor.data_type)
-          raw = bytes[pos, data_size]
+          raw = read_bytes(bytes, pos, data_size, "field data", field_id)
           pos += data_size
 
           decoded = @codec.decode_field(raw, descriptor.data_type, actual_length)
@@ -48,6 +48,17 @@ module CrystalIso8583
         end
 
         Message.new(mti: mti, bitmap: bitmap, fields: fields)
+      end
+
+      private def read_bytes(bytes : Bytes, pos : Int32, size : Int32, context : String, field_id : Int32? = nil) : Bytes
+        if pos + size > bytes.size
+          field_info = field_id ? " (field #{field_id})" : ""
+          raise ParseError.new(
+            "Buffer overrun reading #{context}#{field_info}: " \
+            "need #{size} bytes at offset #{pos}, but message is only #{bytes.size} bytes"
+          )
+        end
+        bytes[pos, size]
       end
     end
   end
