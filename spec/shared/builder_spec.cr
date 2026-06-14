@@ -3,7 +3,7 @@ require "../spec_helper"
 private def make_message(mti : String, fields : Hash(Int32, String))
   fvs = fields.transform_values { |v| CrystalIso8583::Shared::FieldValue.new(Bytes.new(0), v) }
   CrystalIso8583::Shared::Message.new(
-    mti:    CrystalIso8583::Shared::MTI.parse(mti),
+    mti: CrystalIso8583::Shared::MTI.parse(mti),
     bitmap: CrystalIso8583::Shared::Bitmap.new,
     fields: fvs
   )
@@ -13,9 +13,9 @@ describe CrystalIso8583::Shared::Builder do
   dict = CrystalIso8583::V1993::DataDictionary.fields
 
   describe "round-trip with ASCII codec" do
-    codec   = CrystalIso8583::Shared::Codec::ASCII.new
+    codec = CrystalIso8583::Shared::Codec::ASCII.new
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
-    parser  = CrystalIso8583::Shared::Parser.new(dict, codec)
+    parser = CrystalIso8583::Shared::Parser.new(dict, codec)
 
     it "encodes the MTI" do
       parsed = parser.parse(builder.build(make_message("1100", {3 => "310000"})))
@@ -66,9 +66,9 @@ describe CrystalIso8583::Shared::Builder do
   end
 
   describe "round-trip with BCD codec" do
-    codec   = CrystalIso8583::Shared::Codec::BCD.new
+    codec = CrystalIso8583::Shared::Codec::BCD.new
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
-    parser  = CrystalIso8583::Shared::Parser.new(dict, codec)
+    parser = CrystalIso8583::Shared::Parser.new(dict, codec)
 
     it "round-trips FIXED numeric fields" do
       fields = {3 => "310000", 7 => "0618120000", 11 => "000001"}
@@ -95,16 +95,16 @@ describe CrystalIso8583::Shared::Builder do
     it "produces smaller output than ASCII for numeric-heavy messages" do
       fields = {3 => "310000", 7 => "0618120000", 11 => "000001", 4 => "000000001000"}
       ascii_builder = CrystalIso8583::Shared::Builder.new(dict, CrystalIso8583::Shared::Codec::ASCII.new)
-      bcd_bytes   = builder.build(make_message("1100", fields))
+      bcd_bytes = builder.build(make_message("1100", fields))
       ascii_bytes = ascii_builder.build(make_message("1100", fields))
       bcd_bytes.size.should be < ascii_bytes.size
     end
   end
 
   describe "round-trip with EBCDIC codec" do
-    codec   = CrystalIso8583::Shared::Codec::EBCDIC.new
+    codec = CrystalIso8583::Shared::Codec::EBCDIC.new
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
-    parser  = CrystalIso8583::Shared::Parser.new(dict, codec)
+    parser = CrystalIso8583::Shared::Parser.new(dict, codec)
 
     it "round-trips FIXED alphanumeric fields" do
       fields = {37 => "123456789012", 38 => "ABCDEF", 41 => "TERM0001"}
@@ -122,9 +122,9 @@ describe CrystalIso8583::Shared::Builder do
   end
 
   describe "bitmap" do
-    codec   = CrystalIso8583::Shared::Codec::ASCII.new
+    codec = CrystalIso8583::Shared::Codec::ASCII.new
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
-    parser  = CrystalIso8583::Shared::Parser.new(dict, codec)
+    parser = CrystalIso8583::Shared::Parser.new(dict, codec)
 
     it "sets secondary bitmap when a field above 64 is present" do
       fields = {3 => "310000", 112 => "NATIONAL DATA"}
@@ -141,7 +141,7 @@ describe CrystalIso8583::Shared::Builder do
   end
 
   describe "validation" do
-    codec   = CrystalIso8583::Shared::Codec::ASCII.new
+    codec = CrystalIso8583::Shared::Codec::ASCII.new
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
 
     it "raises BuildError when a field ID is not in the dictionary" do
