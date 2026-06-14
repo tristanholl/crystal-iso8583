@@ -3,13 +3,13 @@ require "../spec_helper"
 describe CrystalIso8583::V1993::DataDictionary do
   fields = CrystalIso8583::V1993::DataDictionary.fields
 
-  describe "BMP 39 - Action Code" do
-    it "is FIXED n3" do
+  describe "BMP 39 - Response Code" do
+    it "is FIXED ans2" do
       f = fields[39]
       f.encoding.should eq CrystalIso8583::Shared::FieldEncoding::FIXED
-      f.max_length.should eq 3
-      f.data_type.should eq CrystalIso8583::Shared::DataType::N
-      f.label.should eq "Action Code"
+      f.max_length.should eq 2
+      f.data_type.should eq CrystalIso8583::Shared::DataType::ANS
+      f.label.should eq "Response Code"
     end
   end
 
@@ -87,17 +87,30 @@ describe CrystalIso8583::V1993::DataDictionary do
     end
   end
 
-  describe "removed fields" do
-    it "does not contain BMP 90 (was wrong Original Data Elements)" do
-      fields.has_key?(90).should be_false
+  describe "BMP 18 - Merchant Type" do
+    it "is FIXED n4" do
+      f = fields[18]
+      f.encoding.should eq CrystalIso8583::Shared::FieldEncoding::FIXED
+      f.max_length.should eq 4
+      f.data_type.should eq CrystalIso8583::Shared::DataType::N
     end
+  end
 
-    it "does not contain BMP 18 (Merchant Type, not in spec)" do
-      fields.has_key?(18).should be_false
+  describe "BMP 33 - Forwarding Institution Identification Code" do
+    it "is LLVAR n..11" do
+      f = fields[33]
+      f.encoding.should eq CrystalIso8583::Shared::FieldEncoding::LLVAR
+      f.max_length.should eq 11
+      f.data_type.should eq CrystalIso8583::Shared::DataType::N
     end
+  end
 
-    it "does not contain BMP 33 (Forwarding Institution ID, not in spec)" do
-      fields.has_key?(33).should be_false
+  describe "BMP 90 - Original Data Elements" do
+    it "is FIXED n42" do
+      f = fields[90]
+      f.encoding.should eq CrystalIso8583::Shared::FieldEncoding::FIXED
+      f.max_length.should eq 42
+      f.data_type.should eq CrystalIso8583::Shared::DataType::N
     end
   end
 end
