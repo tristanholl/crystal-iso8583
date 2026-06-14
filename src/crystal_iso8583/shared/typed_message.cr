@@ -70,8 +70,7 @@ module CrystalIso8583
         message = Parser.new(dictionary, codec).parse(bytes)
         instance = new
         message.fields.each do |id, fv|
-          decoded = fv.decoded
-          instance.set_raw_field(id, decoded.is_a?(String) ? decoded : decoded.to_s)
+          instance.set_raw_field(id, fv.decoded)
         end
         instance
       end
