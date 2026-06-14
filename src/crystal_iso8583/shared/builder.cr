@@ -42,6 +42,9 @@ module CrystalIso8583
         in FieldEncoding::LLLVAR
           io.write(@codec.encode_length(logical_length, 3))
           io.write(data)
+        in FieldEncoding::LLLLVAR
+          io.write(@codec.encode_length(logical_length, 4))
+          io.write(data)
         end
       end
 

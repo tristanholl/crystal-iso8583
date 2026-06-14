@@ -34,7 +34,7 @@ module CrystalIso8583
                             len
                           in FieldEncoding::LLLLVAR
                             ld = @codec.length_byte_size(4)
-                            len = @codec.decode_length(bytes[pos, ld], 4)
+                            len = @codec.decode_length(read_bytes(bytes, pos, ld, "LLLLVAR length prefix", field_id), 4)
                             pos += ld
                             len
                           end
