@@ -3,13 +3,13 @@ require "../spec_helper"
 describe CrystalIso8583::V1993::DataDictionary do
   fields = CrystalIso8583::V1993::DataDictionary.fields
 
-  describe "BMP 39 - Response Code" do
-    it "is FIXED ans2" do
+  describe "BMP 39 - Action Code" do
+    it "is FIXED n3" do
       f = fields[39]
       f.encoding.should eq CrystalIso8583::Shared::FieldEncoding::FIXED
-      f.max_length.should eq 2
-      f.data_type.should eq CrystalIso8583::Shared::DataType::ANS
-      f.label.should eq "Response Code"
+      f.max_length.should eq 3
+      f.data_type.should eq CrystalIso8583::Shared::DataType::N
+      f.label.should eq "Action Code"
     end
   end
 

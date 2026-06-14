@@ -50,7 +50,7 @@ module CrystalIso8583
            36 => field_descriptor(36, lll, 104, z, "Track 3 Data"),
            37 => field_descriptor(37, fix, 12, ans, "Retrieval Reference Number"),
            38 => field_descriptor(38, fix, 6, ans, "Authorization ID Response"),
-           39 => field_descriptor(39, fix, 2, ans, "Response Code"),
+           39 => field_descriptor(39, fix, 3, n, "Action Code"),
            40 => field_descriptor(40, fix, 3, ans, "Service Restriction Code"),
            41 => field_descriptor(41, fix, 8, ans, "Card Acceptor Terminal ID"),
            42 => field_descriptor(42, fix, 15, ans, "Card Acceptor ID Code"),
