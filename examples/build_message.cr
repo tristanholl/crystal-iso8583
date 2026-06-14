@@ -1,14 +1,18 @@
 require "../src/crystal_iso8583"
 
-# Build an ISO 8583 v1993 authorization request (1100) using the typed message
-# API and write the binary payload to a file.
-#
 # ISO 8583 messages transported over TCP are typically prefixed with a 4-byte
-# network length indicator. This example writes the raw payload without that
-# header; prepend it if your transport layer requires it.
+# big-endian network length indicator containing the byte length of the payload
+# that follows. This example writes the full framed message by default.
+#
+# Usage:
+#   crystal run examples/build_message.cr                         # with header → data/out/msg_1100_built.bin
+#   crystal run examples/build_message.cr -- out.bin              # custom output, with header
+#   crystal run examples/build_message.cr -- out.bin no-header    # skip the network header
+NETWORK_HEADER_SIZE = 4
 
-codec = CrystalIso8583::Shared::Codec::ASCII.new
-output = ARGV[0]? || "data/out/msg_1100_built.bin"
+codec      = CrystalIso8583::Shared::Codec::ASCII.new
+output     = ARGV[0]? || "data/out/msg_1100_built.bin"
+add_header = ARGV[1]? != "no-header"
 
 msg = CrystalIso8583::V1993::Msg1100.new
 msg.iso002 = "4349710000001380"           # Primary Account Number (PAN)
@@ -28,10 +32,21 @@ msg.iso043 = "My Shop\\Berlin\\10115\\DE" # Card Acceptor Name/Location
 msg.iso048 = "001EAPS"                    # Additional Data — Private
 msg.iso049 = "978"                        # Currency Code, Transaction (EUR)
 
-bytes = msg.build(codec)
+iso_bytes = msg.build(codec)
+
+payload = if add_header
+            io = IO::Memory.new(NETWORK_HEADER_SIZE + iso_bytes.size)
+            io.write_bytes(iso_bytes.size.to_u32, IO::ByteFormat::BigEndian)
+            io.write(iso_bytes)
+            io.to_slice
+          else
+            iso_bytes
+          end
 
 Dir.mkdir_p(File.dirname(output))
-File.open(output, "wb") { |f| f.write(bytes) }
+File.open(output, "wb") { |f| f.write(payload) }
 
-puts "Written #{bytes.size} bytes to #{output}"
+header_note = add_header ? "with #{NETWORK_HEADER_SIZE}-byte network header" : "no network header"
+puts "ISO message : #{iso_bytes.size} bytes"
+puts "Written     : #{payload.size} bytes (#{header_note}) → #{output}"
 puts msg.to_json
