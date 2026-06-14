@@ -145,54 +145,61 @@ describe CrystalIso8583::Shared::Builder do
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
 
     it "raises BuildError when a field ID is not in the dictionary" do
-      expect_raises(CrystalIso8583::Shared::BuildError, "not in dictionary") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {999 => "DATA"}))
       end
+      ex.message.to_s.should contain "not in dictionary"
     end
 
     it "raises BuildError when a numeric field contains a non-digit character" do
-      expect_raises(CrystalIso8583::Shared::BuildError, "non-digit") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {3 => "31A000"}))
       end
+      ex.message.to_s.should contain "non-digit"
     end
 
     it "raises BuildError when a binary field value contains invalid hex characters" do
-      expect_raises(CrystalIso8583::Shared::BuildError, "lowercase hex") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {64 => "GGGGGGGGGGGGGGGG"}))
       end
+      ex.message.to_s.should contain "lowercase hex"
     end
 
     it "raises BuildError when a binary field value has odd length" do
-      expect_raises(CrystalIso8583::Shared::BuildError, "lowercase hex") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {64 => "010203040506070"}))
       end
+      ex.message.to_s.should contain "lowercase hex"
     end
 
     it "raises BuildError when a FIXED binary field has the wrong byte count" do
-      expect_raises(CrystalIso8583::Shared::BuildError, "expected exactly") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {64 => "010203040506070809"}))
       end
+      ex.message.to_s.should contain "expected exactly"
     end
 
     it "raises BuildError when an LLVAR value exceeds max_length" do
       # Field 2 is LLVAR, max 19 digits; 20-digit value must be rejected
-      expect_raises(CrystalIso8583::Shared::BuildError, "exceeds maximum") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {2 => "12345678901234567890"}))
       end
+      ex.message.to_s.should contain "exceeds maximum"
     end
 
     it "raises BuildError when a FIXED field value encodes to more bytes than allowed" do
       # Field 3 is FIXED N 6; a 7-digit string encodes to 7 ASCII bytes vs. 6 expected
-      expect_raises(CrystalIso8583::Shared::BuildError, "exceeds fixed-field size") do
+      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {3 => "3100001"}))
       end
+      ex.message.to_s.should contain "exceeds fixed-field size"
     end
 
     it "includes the field label in the error message" do
       ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {3 => "31A000"}))
       end
-      ex.message.should contain "Processing Code"
+      ex.message.to_s.should contain "Processing Code"
     end
   end
 end
