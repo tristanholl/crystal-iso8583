@@ -35,10 +35,8 @@ msg.iso049 = "978"                        # Currency Code, Transaction (EUR)
 iso_bytes = msg.build(codec)
 
 payload = if add_header
-            io = IO::Memory.new(NETWORK_HEADER_SIZE + iso_bytes.size)
-            io.write_bytes(iso_bytes.size.to_u32, IO::ByteFormat::BigEndian)
-            io.write(iso_bytes)
-            io.to_slice
+            length_prefix = iso_bytes.size.to_s.rjust(NETWORK_HEADER_SIZE, '0').to_slice
+            length_prefix + iso_bytes
           else
             iso_bytes
           end
