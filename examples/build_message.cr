@@ -1,4 +1,5 @@
 require "../src/crystal_iso8583"
+require "option_parser"
 
 # Build an ISO 8583 v1993 authorization request (1100) using the typed message
 # API and write the framed payload to a file.
@@ -6,23 +7,31 @@ require "../src/crystal_iso8583"
 # ISO 8583 messages transported over TCP are typically prefixed with a 4-byte
 # ASCII decimal network length indicator (e.g. "0306" for a 306-byte message).
 # This example writes the full framed message by default.
-#
-# Usage:
-#   crystal run examples/build_message.cr                         # with header → data/out/msg_1100_built.bin
-#   crystal run examples/build_message.cr -- out.bin              # custom output, with header
-#   crystal run examples/build_message.cr -- out.bin no-header    # skip the network header
 NETWORK_HEADER_SIZE = 4
 
 codec      = CrystalIso8583::Shared::Codec::ASCII.new
-output     = ARGV[0]? || "data/out/msg_1100_built.bin"
-add_header = ARGV[1]? != "no-header"
+output     = "data/out/msg_1100_built.bin"
+add_header = true
+
+OptionParser.parse do |parser|
+  parser.banner = "Usage: crystal run examples/build_message.cr -- [options]"
+
+  parser.on("-o FILE", "--output FILE", "Output file (default: data/out/msg_1100_built.bin)") { |f| output = f }
+  parser.on("--no-header", "Omit the 4-byte ASCII network length prefix") { add_header = false }
+  parser.on("-h", "--help", "Show this help") { puts parser; exit 0 }
+
+  parser.invalid_option do |flag|
+    STDERR.puts "Unknown flag: #{flag}"
+    STDERR.puts parser
+    exit 1
+  end
+end
 
 msg = CrystalIso8583::V1993::Msg1100.new
 msg.iso002 = "4349750003416619"                                  # Primary Account Number (PAN)
 msg.iso003 = "000000"                                            # Processing Code
 msg.iso004 = "000000001000"                                      # Amount, Transaction
 msg.iso006 = "000000001000"                                      # Amount, Cardholder Billing
-msg.iso007 = "0302143124"                                        # Date and Time, Transmission (MMDDhhmmss)
 msg.iso011 = "171374"                                            # System Trace Audit Number (STAN)
 msg.iso012 = "210302143124"                                      # Date and Time, Local Transaction
 msg.iso014 = "2402"                                              # Date, Expiration
