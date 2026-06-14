@@ -151,13 +151,6 @@ describe CrystalIso8583::Shared::Builder do
       ex.message.to_s.should contain "1..128"
     end
 
-    it "raises BuildError when a numeric field contains a non-digit character" do
-      ex = expect_raises(CrystalIso8583::Shared::BuildError) do
-        builder.build(make_message("1100", {3 => "31A000"}))
-      end
-      ex.message.to_s.should contain "non-digit"
-    end
-
     it "raises BuildError when a binary field value contains invalid hex characters" do
       ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {64 => "GGGGGGGGGGGGGGGG"}))

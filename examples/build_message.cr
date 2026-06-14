@@ -1,8 +1,11 @@
 require "../src/crystal_iso8583"
 
+# Build an ISO 8583 v1993 authorization request (1100) using the typed message
+# API and write the framed payload to a file.
+#
 # ISO 8583 messages transported over TCP are typically prefixed with a 4-byte
-# big-endian network length indicator containing the byte length of the payload
-# that follows. This example writes the full framed message by default.
+# ASCII decimal network length indicator (e.g. "0306" for a 306-byte message).
+# This example writes the full framed message by default.
 #
 # Usage:
 #   crystal run examples/build_message.cr                         # with header → data/out/msg_1100_built.bin
@@ -15,22 +18,35 @@ output     = ARGV[0]? || "data/out/msg_1100_built.bin"
 add_header = ARGV[1]? != "no-header"
 
 msg = CrystalIso8583::V1993::Msg1100.new
-msg.iso002 = "4349710000001380"           # Primary Account Number (PAN)
-msg.iso003 = "310000"                     # Processing Code
-msg.iso004 = "000000001000"               # Amount, Transaction (10.00 in minor units)
-msg.iso007 = "0614120000"                 # Date and Time, Transmission (MMDDhhmmss)
-msg.iso011 = "000001"                     # System Trace Audit Number (STAN)
-msg.iso012 = "260614120000"               # Date and Time, Local Transaction
-msg.iso022 = "021000000000"               # POS Data Code
-msg.iso024 = "100"                        # Function Code
-msg.iso026 = "5411"                       # Card Acceptor Business Code (MCC)
-msg.iso032 = "27200"                      # Acquiring Institution Identification Code
-msg.iso037 = "000000000001"               # Retrieval Reference Number
-msg.iso041 = "TERM0001"                   # Card Acceptor Terminal ID
-msg.iso042 = "MERCH001       "            # Card Acceptor ID Code (15 chars)
-msg.iso043 = "My Shop\\Berlin\\10115\\DE" # Card Acceptor Name/Location
-msg.iso048 = "001EAPS"                    # Additional Data — Private
-msg.iso049 = "978"                        # Currency Code, Transaction (EUR)
+msg.iso002 = "4349750003416619"                           # Primary Account Number (PAN)
+msg.iso003 = "000000"                                     # Processing Code
+msg.iso004 = "000000000079"                               # Amount, Transaction
+msg.iso006 = "000000000079"                               # Amount, Cardholder Billing
+msg.iso007 = "0303194156"                                 # Date and Time, Transmission (MMDDhhmmss)
+msg.iso011 = "259059"                                     # System Trace Audit Number (STAN)
+msg.iso012 = "210303194156"                               # Date and Time, Local Transaction
+msg.iso014 = "2402"                                       # Date, Expiration
+msg.iso022 = "L10101L5500C"                               # POS Data Code
+msg.iso023 = "000"                                        # Card Sequence Number
+msg.iso024 = "100"                                        # Function Code
+msg.iso025 = "1403"                                       # Message Reason Code
+msg.iso026 = "5411"                                       # Card Acceptor Business Code (MCC)
+msg.iso032 = "483072"                                     # Acquiring Institution Identification Code
+msg.iso033 = "12928"                                      # Forwarding Institution Identification Code
+msg.iso037 = "106218259059"                               # Retrieval Reference Number
+msg.iso039 = "100"                                        # Action Code
+msg.iso041 = "56034449"                                   # Card Acceptor Terminal Identification
+msg.iso042 = "4556336799     "                            # Card Acceptor Identification Code (15 chars)
+msg.iso043 = "REWE Markt GmbH-Zw\\\\Berlin\\             DEU"  # Card Acceptor Name/Location
+msg.iso048 = "001"                                        # Additional Data — Private
+msg.iso049 = "978"                                        # Currency Code, Transaction (EUR)
+msg.iso051 = "978"                                        # Currency Code, Cardholder Billing (EUR)
+msg.iso063 = "0315481062673163064"                        # Network Data
+msg.iso093 = "12928"                                      # Transaction Destination Institution ID
+msg.iso094 = "483072"                                     # Transaction Originator Institution ID
+msg.iso100 = "00000000000"                                # Receiving Institution Identification Code
+msg.iso102 = "500004684881           "                    # Account Identification 1
+msg.iso116 = "05000040"                                   # POS Data
 
 iso_bytes = msg.build(codec)
 
