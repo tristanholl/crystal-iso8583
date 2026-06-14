@@ -56,6 +56,12 @@ module CrystalIso8583
 
       private def validate_field_value!(field_id : Int32, str : String, descriptor : FieldDescriptor) : Nil
         case descriptor.data_type
+        when DataType::N
+          unless str.each_char.all?(&.ascii_number?)
+            raise BuildError.new(
+              "Field #{field_id} (#{descriptor.label}): numeric field value must contain only digits"
+            )
+          end
         when DataType::B
           valid_hex = str.size.even? && str.each_char.all? { |c| c.ascii_number? || ('a'..'f').includes?(c) }
           unless valid_hex
