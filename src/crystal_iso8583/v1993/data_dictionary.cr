@@ -54,11 +54,15 @@ module CrystalIso8583
            58 => field_descriptor(58, ll, 11, n, "Authorising Agent Institution Identification Code"),
            59 => field_descriptor(59, lll, 100, ans, "Acquirer Reference Data (Transport Data)"),
            62 => field_descriptor(62, lll, 999, ans, "e-Payment and MOTO Data"),
+           63 => field_descriptor(63, lll, 999, ans, "Network Data"),
            64 => field_descriptor(64, fix, 8, b, "Message Authentication Code (MAC) Field"),
            93 => field_descriptor(93, ll, 5, n, "Transaction Destination Institution Identification Code"),
            94 => field_descriptor(94, ll, 5, n, "Transaction Originator Identification Code"),
            95 => field_descriptor(95, ll, 99, ans, "Card Issuer Reference Data"),
+          100 => field_descriptor(100, ll, 11, n, "Receiving Institution Identification Code"),
+          102 => field_descriptor(102, ll, 28, ans, "Account Identification 1"),
           111 => field_descriptor(111, llll, 9999, b, "Encryption Data"),
+          116 => field_descriptor(116, lll, 999, ans, "POS Data"),
           128 => field_descriptor(128, fix, 8, b, "Message Authentication Code (MAC) Field"),
         }
       end
