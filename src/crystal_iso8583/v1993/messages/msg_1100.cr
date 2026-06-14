@@ -27,7 +27,7 @@ module CrystalIso8583
       field iso041, id: 41, required: true # Card Acceptor Terminal Identification — M
       field iso042, id: 42, required: true # Card Acceptor Identification Code — M
       field iso043, id: 43, required: true # Card Acceptor Name/Location — M
-      field iso048, id: 48, required: true # Additional Data - Private — M
+      field iso048, id: 48                 # Additional Data - Private — C
       field iso049, id: 49                 # Currency Code, Transaction — C
       field iso051, id: 51                 # Currency Code, Cardholder Billing — C
       field iso052, id: 52                 # PIN Data — C
