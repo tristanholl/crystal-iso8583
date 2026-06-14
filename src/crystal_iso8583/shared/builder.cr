@@ -6,7 +6,10 @@ module CrystalIso8583
 
       def build(message : Message) : Bytes
         bitmap = Bitmap.new
-        message.fields.each_key { |id| bitmap.set(id) }
+        message.fields.each_key do |id|
+          raise BuildError.new("Field #{id}: field ID must be in range 1..128") unless 1 <= id <= 128
+          bitmap.set(id)
+        end
 
         io = IO::Memory.new
         io.write(@codec.encode_mti(message.mti))

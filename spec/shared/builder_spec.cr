@@ -144,11 +144,11 @@ describe CrystalIso8583::Shared::Builder do
     codec = CrystalIso8583::Shared::Codec::ASCII.new
     builder = CrystalIso8583::Shared::Builder.new(dict, codec)
 
-    it "raises BuildError when a field ID is not in the dictionary" do
+    it "raises BuildError when a field ID is out of the 1..128 range" do
       ex = expect_raises(CrystalIso8583::Shared::BuildError) do
         builder.build(make_message("1100", {999 => "DATA"}))
       end
-      ex.message.to_s.should contain "not in dictionary"
+      ex.message.to_s.should contain "1..128"
     end
 
     it "raises BuildError when a numeric field contains a non-digit character" do
