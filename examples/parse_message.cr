@@ -8,9 +8,9 @@ require "option_parser"
 # ASCII decimal network length indicator. The header is stripped before parsing.
 NETWORK_HEADER_SIZE = 4
 
-codec       = CrystalIso8583::Shared::Codec::ASCII.new
-input_glob  = "data/in/*.in"
-output_dir  = "data/out"
+codec = CrystalIso8583::Shared::Codec::ASCII.new
+input_glob = "data/in/*.in"
+output_dir = "data/out"
 header_size = NETWORK_HEADER_SIZE
 
 OptionParser.parse do |parser|

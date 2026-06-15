@@ -9,8 +9,8 @@ require "option_parser"
 # This example writes the full framed message by default.
 NETWORK_HEADER_SIZE = 4
 
-codec      = CrystalIso8583::Shared::Codec::ASCII.new
-output     = "data/out/msg_1100_built.bin"
+codec = CrystalIso8583::Shared::Codec::ASCII.new
+output = "data/out/msg_1100_built.bin"
 add_header = true
 
 OptionParser.parse do |parser|
@@ -28,32 +28,32 @@ OptionParser.parse do |parser|
 end
 
 msg = CrystalIso8583::V1993::Msg1100.new
-msg.iso002 = "4349750003416619"                                  # Primary Account Number (PAN)
-msg.iso003 = "000000"                                            # Processing Code
-msg.iso004 = "000000001000"                                      # Amount, Transaction
-msg.iso006 = "000000001000"                                      # Amount, Cardholder Billing
-msg.iso011 = "171374"                                            # System Trace Audit Number (STAN)
-msg.iso012 = "210302143124"                                      # Date and Time, Local Transaction
-msg.iso014 = "2402"                                              # Date, Expiration
-msg.iso022 = "100050J00010"                                      # POS Data Code
-msg.iso023 = "000"                                               # Card Sequence Number
-msg.iso024 = "100"                                               # Function Code
-msg.iso026 = "6012"                                              # Card Acceptor Business Code (MCC)
-msg.iso032 = "487115"                                            # Acquiring Institution Identification Code
-msg.iso033 = "12928"                                             # Forwarding Institution Identification Code
-msg.iso037 = "106113171374"                                      # Retrieval Reference Number
-msg.iso038 = "252284"                                            # Approval Code
-msg.iso041 = "99999999"                                          # Card Acceptor Terminal Identification
-msg.iso042 = "000000000206535"                                   # Card Acceptor Identification Code (15 chars)
-msg.iso043 = "Revolut**8624*\\\\GBR\\             LTU"          # Card Acceptor Name/Location
-msg.iso049 = "978"                                               # Currency Code, Transaction (EUR)
-msg.iso051 = "978"                                               # Currency Code, Cardholder Billing (EUR)
-msg.iso063 = "0315481061486847479"                               # Network Data
-msg.iso093 = "12928"                                             # Transaction Destination Institution ID
-msg.iso094 = "487115"                                            # Transaction Originator Institution ID
-msg.iso100 = "00000000000"                                       # Receiving Institution Identification Code
-msg.iso102 = "500004684881           "                           # Account Identification 1
-msg.iso116 = "5900000005"                                        # POS Data
+msg.iso002 = "4349750003416619"                        # Primary Account Number (PAN)
+msg.iso003 = "000000"                                  # Processing Code
+msg.iso004 = "000000001000"                            # Amount, Transaction
+msg.iso006 = "000000001000"                            # Amount, Cardholder Billing
+msg.iso011 = "171374"                                  # System Trace Audit Number (STAN)
+msg.iso012 = "210302143124"                            # Date and Time, Local Transaction
+msg.iso014 = "2402"                                    # Date, Expiration
+msg.iso022 = "100050J00010"                            # POS Data Code
+msg.iso023 = "000"                                     # Card Sequence Number
+msg.iso024 = "100"                                     # Function Code
+msg.iso026 = "6012"                                    # Card Acceptor Business Code (MCC)
+msg.iso032 = "487115"                                  # Acquiring Institution Identification Code
+msg.iso033 = "12928"                                   # Forwarding Institution Identification Code
+msg.iso037 = "106113171374"                            # Retrieval Reference Number
+msg.iso038 = "252284"                                  # Approval Code
+msg.iso041 = "99999999"                                # Card Acceptor Terminal Identification
+msg.iso042 = "000000000206535"                         # Card Acceptor Identification Code (15 chars)
+msg.iso043 = "Revolut**8624*\\\\GBR\\             LTU" # Card Acceptor Name/Location
+msg.iso049 = "978"                                     # Currency Code, Transaction (EUR)
+msg.iso051 = "978"                                     # Currency Code, Cardholder Billing (EUR)
+msg.iso063 = "0315481061486847479"                     # Network Data
+msg.iso093 = "12928"                                   # Transaction Destination Institution ID
+msg.iso094 = "487115"                                  # Transaction Originator Institution ID
+msg.iso100 = "00000000000"                             # Receiving Institution Identification Code
+msg.iso102 = "500004684881           "                 # Account Identification 1
+msg.iso116 = "5900000005"                              # POS Data
 
 iso_bytes = msg.build(codec)
 
