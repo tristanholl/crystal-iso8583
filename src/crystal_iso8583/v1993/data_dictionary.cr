@@ -2,15 +2,15 @@ module CrystalIso8583
   module V1993
     module DataDictionary
       def self.fields : Hash(Int32, Shared::FieldDescriptor)
-        fix = Shared::FieldEncoding::FIXED
-        ll = Shared::FieldEncoding::LLVAR
-        lll = Shared::FieldEncoding::LLLVAR
-        llll = Shared::FieldEncoding::LLLLVAR
-        n = Shared::DataType::N
-        an = Shared::DataType::AN
-        ans = Shared::DataType::ANS
-        b = Shared::DataType::B
-        z = Shared::DataType::Z
+        fix = Shared::FieldEncoding::FIXED    # fixed-length field
+        ll = Shared::FieldEncoding::LLVAR     # variable-length, 2-digit length prefix
+        lll = Shared::FieldEncoding::LLLVAR   # variable-length, 3-digit length prefix
+        llll = Shared::FieldEncoding::LLLLVAR # variable-length, 4-digit length prefix
+        n = Shared::DataType::N               # numeric (digits 0–9 only)
+        an = Shared::DataType::AN             # alphanumeric (letters and digits)
+        ans = Shared::DataType::ANS           # alphanumeric + special characters
+        b = Shared::DataType::B               # binary (encoded as hex)
+        z = Shared::DataType::Z               # track data (magnetic stripe format)
 
         {
             2 => field_descriptor(2, ll, 19, n, "Primary Account Number (PAN)"),
@@ -104,8 +104,8 @@ module CrystalIso8583
            90 => field_descriptor(90, fix, 42, n, "Original Data Elements"),
            91 => field_descriptor(91, fix, 1, ans, "File Update Code"),
            92 => field_descriptor(92, fix, 2, ans, "File Security Code"),
-           93 => field_descriptor(93, ll, 5, n, "Transaction Destination Institution Identification Code"),
-           94 => field_descriptor(94, ll, 5, n, "Transaction Originator Identification Code"),
+           93 => field_descriptor(93, ll, 11, n, "Transaction Destination Institution Identification Code"),
+           94 => field_descriptor(94, ll, 11, n, "Transaction Originator Identification Code"),
            95 => field_descriptor(95, ll, 99, ans, "Card Issuer Reference Data"),
            96 => field_descriptor(96, fix, 8, b, "Message Security Code"),
            97 => field_descriptor(97, fix, 17, ans, "Amount, Net Settlement"),
