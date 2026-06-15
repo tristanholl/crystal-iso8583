@@ -14,6 +14,8 @@ require "./crystal_iso8583/shared/typed_message"
 
 require "./crystal_iso8583/v1987/data_dictionary"
 require "./crystal_iso8583/v1987/message_factory"
+require "./crystal_iso8583/v1987/typed_message"
+require "./crystal_iso8583/v1987/messages/msg_0100"
 
 require "./crystal_iso8583/v1993/data_dictionary"
 require "./crystal_iso8583/v1993/message_factory"
