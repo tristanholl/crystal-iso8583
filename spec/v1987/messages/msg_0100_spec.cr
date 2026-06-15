@@ -86,7 +86,7 @@ describe CrystalIso8583::V1987::Msg0100 do
       msg.iso049 = "840"
       msg.iso043 = "MyShop          Berlin          DE"
 
-      codec = CrystalIso8583::Shared::Codec::ASCII
+      codec = CrystalIso8583::Shared::Codec::ASCII.new
       bytes = msg.build(codec)
       parsed = CrystalIso8583::V1987::Msg0100.parse(bytes, codec)
 
@@ -118,7 +118,7 @@ describe CrystalIso8583::V1987::Msg0100 do
       msg.iso042 = "MERCH001       "
       msg.iso049 = "840"
 
-      codec = CrystalIso8583::Shared::Codec::EBCDIC
+      codec = CrystalIso8583::Shared::Codec::EBCDIC.new
       bytes = msg.build(codec)
       parsed = CrystalIso8583::V1987::Msg0100.parse(bytes, codec)
 
