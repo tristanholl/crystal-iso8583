@@ -2,14 +2,14 @@ module CrystalIso8583
   module V1987
     module DataDictionary
       def self.fields : Hash(Int32, Shared::FieldDescriptor)
-        fix = Shared::FieldEncoding::FIXED
-        ll = Shared::FieldEncoding::LLVAR
-        lll = Shared::FieldEncoding::LLLVAR
-        n = Shared::DataType::N
-        an = Shared::DataType::AN
-        ans = Shared::DataType::ANS
-        b = Shared::DataType::B
-        z = Shared::DataType::Z
+        fix = Shared::FieldEncoding::FIXED    # fixed-length field
+        ll = Shared::FieldEncoding::LLVAR     # variable-length, 2-digit length prefix
+        lll = Shared::FieldEncoding::LLLVAR   # variable-length, 3-digit length prefix
+        n = Shared::DataType::N               # numeric (digits 0–9 only)
+        an = Shared::DataType::AN             # alphanumeric (letters and digits)
+        ans = Shared::DataType::ANS           # alphanumeric + special characters
+        b = Shared::DataType::B               # binary (encoded as hex)
+        z = Shared::DataType::Z               # track data (magnetic stripe format)
 
         {
             2 => field_descriptor(2, ll, 19, n, "Primary Account Number (PAN)"),
