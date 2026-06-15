@@ -28,7 +28,7 @@ describe CrystalIso8583::V1993::Msg1430 do
       end
     end
 
-    it "passes when iso007 and iso039 are set" do
+    it "passes when iso039 is set" do
       msg = CrystalIso8583::V1993::Msg1430.new
       msg.iso007 = "0618120000"
       msg.iso039 = "400"
