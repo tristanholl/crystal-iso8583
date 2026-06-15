@@ -7,7 +7,7 @@ module CrystalIso8583
       field iso003, id: 3                  # Processing Code — = (mirrored)
       field iso004, id: 4                  # Amount, Transaction — C
       field iso006, id: 6                  # Amount, Cardholder Billing — C
-      field iso007, id: 7, required: true  # Date and Time, Transmission — M
+      field iso007, id: 7                  # Date and Time, Transmission — C
       field iso010, id: 10                 # Conversion Rate, Cardholder Billing — = (mirrored)
       field iso011, id: 11                 # System Trace Audit Number (STAN) — = (mirrored)
       field iso012, id: 12                 # Date and Time, Local Transaction — = (mirrored)
