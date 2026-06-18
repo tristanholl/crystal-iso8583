@@ -9,21 +9,13 @@ require "option_parser"
 # ASCII decimal network length indicator. The header is stripped before parsing.
 NETWORK_HEADER_SIZE = 4
 
-# Example: a real-world Visa BASE I 0100 message mixes encodings per concern
-# (BCD MTI, raw binary length prefixes, BCD numeric fields, EBCDIC text
-# fields) behind a 7-byte proprietary header. To parse such a file:
-#
-#   crystal run examples/parse_message.cr -- --version 1987 --codec configurable \
-#     --header-size 7 --debug
-#
-# which builds the codec as:
-#
-#   CrystalIso8583::Shared::Codec::Configurable.new(
-#     mti_encoding: CrystalIso8583::Shared::SubEncoding::BCD,
-#     length_encoding: CrystalIso8583::Shared::SubEncoding::Binary,
-#     numeric_encoding: CrystalIso8583::Shared::SubEncoding::BCD,
-#     text_encoding: CrystalIso8583::Shared::SubEncoding::EBCDIC,
-#   )
+# The --codec configurable option builds a Codec::Configurable with BCD
+# MTI/numeric fields, a single raw binary length-prefix byte, and EBCDIC
+# text fields — the mix used by real-world networks like Visa BASE I. Field
+# dictionaries and header sizes vary by deployment, though: see
+# examples/parse_visa_base1.cr for a fully worked, validated example
+# against a real Visa BASE I 0100 message, including the dictionary
+# overrides such deployments often need.
 
 version = "1993"
 codec_name = nil

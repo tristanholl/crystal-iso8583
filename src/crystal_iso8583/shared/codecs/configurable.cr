@@ -9,7 +9,10 @@ module CrystalIso8583
       # fields, raw binary length prefixes, and EBCDIC text fields.
       #
       # Binary (B) field data is always treated as raw bytes, matching the
-      # other codecs.
+      # other codecs. Binary length prefixes use a fixed byte width
+      # (`binary_length_byte_size`, default 1) for both LLVAR and LLLVAR
+      # fields, since real networks typically use a single byte for both
+      # rather than scaling the prefix width with the nominal digit count.
       # -----------------------------------------------------------------------
       class Configurable
         include Codec
@@ -19,6 +22,7 @@ module CrystalIso8583
           @length_encoding : SubEncoding = SubEncoding::ASCII,
           @numeric_encoding : SubEncoding = SubEncoding::ASCII,
           @text_encoding : SubEncoding = SubEncoding::ASCII,
+          @binary_length_byte_size : Int32 = 1,
         )
           unless {SubEncoding::ASCII, SubEncoding::BCD, SubEncoding::EBCDIC}.includes?(@mti_encoding)
             raise ArgumentError.new("mti_encoding must be ASCII, BCD, or EBCDIC, got #{@mti_encoding}")
@@ -38,7 +42,7 @@ module CrystalIso8583
         def length_byte_size(digits : Int32) : Int32
           case @length_encoding
           when SubEncoding::BCD    then (digits + 1) // 2
-          when SubEncoding::Binary then digits <= 2 ? 1 : 2
+          when SubEncoding::Binary then @binary_length_byte_size
           else                          digits
           end
         end

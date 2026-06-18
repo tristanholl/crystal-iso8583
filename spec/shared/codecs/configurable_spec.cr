@@ -43,16 +43,18 @@ describe Configurable do
       codec.decode_length(codec.encode_length(12, 2), 2).should eq 12
     end
 
-    it "round-trips Binary length prefixes as a single byte for <= 2 digits" do
+    it "round-trips Binary length prefixes as a single byte by default, for LLVAR and LLLVAR alike" do
       codec = Configurable.new(length_encoding: SubEncoding::Binary)
       codec.length_byte_size(2).should eq 1
+      codec.length_byte_size(3).should eq 1
       encoded = codec.encode_length(9, 2)
       encoded.should eq Bytes[0x09]
       codec.decode_length(encoded, 2).should eq 9
+      codec.decode_length(codec.encode_length(34, 3), 3).should eq 34
     end
 
-    it "round-trips Binary length prefixes as two bytes for 3+ digits" do
-      codec = Configurable.new(length_encoding: SubEncoding::Binary)
+    it "supports a wider binary_length_byte_size for fields needing it" do
+      codec = Configurable.new(length_encoding: SubEncoding::Binary, binary_length_byte_size: 2)
       codec.length_byte_size(3).should eq 2
       encoded = codec.encode_length(260, 3)
       codec.decode_length(encoded, 3).should eq 260
