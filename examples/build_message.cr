@@ -1,23 +1,32 @@
 require "../src/crystal_iso8583"
 require "option_parser"
+require "./scheme"
 
-# Build an ISO 8583 v1993 authorization request (1100) using the typed message
-# API and write the framed payload to a file.
+# Build an ISO 8583 authorization request using the typed message API and
+# write the framed payload to a file. Supports both the 1987 (Msg0100) and
+# 1993 (Msg1100) message versions.
 #
 # ISO 8583 messages transported over TCP are typically prefixed with a 4-byte
 # ASCII decimal network length indicator (e.g. "0306" for a 306-byte message).
 # This example writes the full framed message by default.
 NETWORK_HEADER_SIZE = 4
 
-codec = CrystalIso8583::Shared::Codec::ASCII.new
-output = "data/out/msg_1100_built.bin"
+version = "1993"
+codec_name = nil
+output = nil
 add_header = true
+scheme = nil
+version_explicit = false
+codec_explicit = false
 
 OptionParser.parse do |parser|
   parser.banner = "Usage: crystal run examples/build_message.cr -- [options]"
 
-  parser.on("-o FILE", "--output FILE", "Output file (default: data/out/msg_1100_built.bin)") { |f| output = f }
-  parser.on("--no-header", "Omit the 4-byte ASCII network length prefix") { add_header = false }
+  parser.on("--version VERSION", "Message version: 1987 or 1993 (default: 1993)") { |v| version = v; version_explicit = true }
+  parser.on("--codec CODEC", "Codec: ascii, bcd, ebcdic, or configurable (default: ascii for 1993, ebcdic for 1987)") { |c| codec_name = c; codec_explicit = true }
+  parser.on("-o FILE", "--output FILE", "Output file (default: data/out/msg_<mti>_built.bin)") { |f| output = f }
+  parser.on("--no-header", "Omit the network header (4-byte ASCII length prefix, or the 22-byte Visa header for --scheme visa)") { add_header = false }
+  parser.on("--scheme SCHEME", "Message scheme preset: visa (forces version 1987, configurable codec, 22-byte header)") { |s| scheme = s }
   parser.on("-h", "--help", "Show this help") { puts parser; exit 0 }
 
   parser.invalid_option do |flag|
@@ -27,47 +36,128 @@ OptionParser.parse do |parser|
   end
 end
 
-msg = CrystalIso8583::V1993::Msg1100.new
-msg.iso002 = "4349750003416619"                        # Primary Account Number (PAN)
-msg.iso003 = "000000"                                  # Processing Code
-msg.iso004 = "000000001000"                            # Amount, Transaction
-msg.iso006 = "000000001000"                            # Amount, Cardholder Billing
-msg.iso011 = "171374"                                  # System Trace Audit Number (STAN)
-msg.iso012 = "210302143124"                            # Date and Time, Local Transaction
-msg.iso014 = "2402"                                    # Date, Expiration
-msg.iso022 = "100050J00010"                            # POS Data Code
-msg.iso023 = "000"                                     # Card Sequence Number
-msg.iso024 = "100"                                     # Function Code
-msg.iso026 = "6012"                                    # Card Acceptor Business Code (MCC)
-msg.iso032 = "487115"                                  # Acquiring Institution Identification Code
-msg.iso033 = "12928"                                   # Forwarding Institution Identification Code
-msg.iso037 = "106113171374"                            # Retrieval Reference Number
-msg.iso038 = "252284"                                  # Approval Code
-msg.iso041 = "99999999"                                # Card Acceptor Terminal Identification
-msg.iso042 = "000000000206535"                         # Card Acceptor Identification Code (15 chars)
-msg.iso043 = "Revolut**8624*\\\\GBR\\             LTU" # Card Acceptor Name/Location
-msg.iso049 = "978"                                     # Currency Code, Transaction (EUR)
-msg.iso051 = "978"                                     # Currency Code, Cardholder Billing (EUR)
-msg.iso063 = "0315481061486847479"                     # Network Data
-msg.iso093 = "12928"                                   # Transaction Destination Institution ID
-msg.iso094 = "487115"                                  # Transaction Originator Institution ID
-msg.iso100 = "00000000000"                             # Receiving Institution Identification Code
-msg.iso102 = "500004684881           "                 # Account Identification 1
-msg.iso116 = "5900000005"                              # POS Data
+resolved = Scheme.resolve(scheme, version, codec_name, explicit_version: version_explicit, explicit_codec: codec_explicit)
+version = resolved.version
+codec_name = resolved.codec_name
+codec = resolved.codec
 
+msg = if scheme == "visa"
+        # Fake, non-production data shaped like a Visa BASE I 0100 message
+        # (see examples/parse_visa_base1.cr for the matching parse-side
+        # worked example of the real field layout this mirrors).
+        m = CrystalIso8583::V1987::Msg0100.new
+        m.iso002 = "4000123456789010"                        # Primary Account Number (PAN) — test card
+        m.iso003 = "000000"                                  # Processing Code
+        m.iso004 = "000000005000"                            # Amount, Transaction
+        m.iso006 = "000000005000"                            # Amount, Cardholder Billing
+        m.iso007 = "0618120000"                              # Date and Time, Transmission
+        m.iso010 = "00000000"                                # Conversion Rate, Cardholder Billing
+        m.iso011 = "123456"                                  # Systems Trace Audit Number
+        m.iso012 = "120000"                                  # Time, Local Transaction
+        m.iso013 = "0618"                                    # Date, Local Transaction
+        m.iso014 = "2812"                                    # Date, Expiration
+        m.iso018 = "5999"                                    # Merchant Type
+        m.iso019 = "0840"                                    # Acquiring Institution Country Code
+        m.iso022 = "0710"                                    # Point of Service Entry Mode
+        m.iso025 = "00"                                      # Point of Service Condition Code
+        m.iso032 = "123456"                                  # Acquiring Institution Identification Code
+        m.iso035 = "4000123456789010=28121010000012345"      # Track 2 Data (37 digits, fake)
+        m.iso037 = "123456789012"                            # Retrieval Reference Number
+        m.iso041 = "12345678"                                # Card Acceptor Terminal Identification
+        m.iso042 = "000000000123456"                         # Card Acceptor Identification Code
+        m.iso043 = "EXAMPLE MERCHANT          ANYTOWN    US" # Card Acceptor Name/Location
+        m.iso044 = "    1   1"                               # Additional Response Data
+        m.iso049 = "840"                                     # Currency Code, Transaction (USD)
+        m.iso051 = "840"                                     # Currency Code, Cardholder Billing (USD)
+        m.iso056 = "00"                                      # Reserved for ISO Use (fake placeholder)
+        m.iso060 = "00000000"                                # Reserved for Private Use (fake placeholder)
+        m.iso062 = "00"                                      # Reserved for Private Use (fake placeholder)
+        m.iso063 = "00"                                      # Reserved for Private Use (fake placeholder)
+        m.iso104 = "00"                                      # Transaction Description (fake placeholder)
+        m.iso123 = "00"                                      # Reserved for Private Use (fake placeholder)
+        m
+      else
+        case version
+        when "1987"
+          m = CrystalIso8583::V1987::Msg0100.new
+          m.iso002 = "4349750003416619" # Primary Account Number (PAN)
+          m.iso003 = "000000"           # Processing Code
+          m.iso004 = "000000001000"     # Amount, Transaction
+          m.iso007 = "0302143124"       # Date and Time, Transmission
+          m.iso011 = "171374"           # Systems Trace Audit Number (STAN)
+          m.iso012 = "143124"           # Time, Local Transaction
+          m.iso013 = "0302"             # Date, Local Transaction
+          m.iso014 = "2402"             # Date, Expiration
+          m.iso022 = "0051"             # Point of Service Entry Mode
+          m.iso025 = "00"               # Point of Service Condition Code
+          m.iso032 = "487115"           # Acquiring Institution Identification Code
+          m.iso037 = "106113171374"     # Retrieval Reference Number
+          m.iso041 = "99999999"         # Card Acceptor Terminal Identification
+          m.iso042 = "000000000206535"  # Card Acceptor Identification Code (15 chars)
+          m.iso043 = "Revolut*8624*GBR" # Card Acceptor Name/Location (fixed 40 chars, padded by builder)
+          m.iso049 = "978"              # Currency Code, Transaction (EUR)
+          m
+        when "1993"
+          m = CrystalIso8583::V1993::Msg1100.new
+          m.iso002 = "4349750003416619"                        # Primary Account Number (PAN)
+          m.iso003 = "000000"                                  # Processing Code
+          m.iso004 = "000000001000"                            # Amount, Transaction
+          m.iso006 = "000000001000"                            # Amount, Cardholder Billing
+          m.iso011 = "171374"                                  # System Trace Audit Number (STAN)
+          m.iso012 = "210302143124"                            # Date and Time, Local Transaction
+          m.iso014 = "2402"                                    # Date, Expiration
+          m.iso022 = "100050J00010"                            # POS Data Code
+          m.iso023 = "000"                                     # Card Sequence Number
+          m.iso024 = "100"                                     # Function Code
+          m.iso026 = "6012"                                    # Card Acceptor Business Code (MCC)
+          m.iso032 = "487115"                                  # Acquiring Institution Identification Code
+          m.iso033 = "12928"                                   # Forwarding Institution Identification Code
+          m.iso037 = "106113171374"                            # Retrieval Reference Number
+          m.iso038 = "252284"                                  # Approval Code
+          m.iso041 = "99999999"                                # Card Acceptor Terminal Identification
+          m.iso042 = "000000000206535"                         # Card Acceptor Identification Code (15 chars)
+          m.iso043 = "Revolut**8624*\\\\GBR\\             LTU" # Card Acceptor Name/Location
+          m.iso049 = "978"                                     # Currency Code, Transaction (EUR)
+          m.iso051 = "978"                                     # Currency Code, Cardholder Billing (EUR)
+          m.iso063 = "0315481061486847479"                     # Network Data
+          m.iso093 = "12928"                                   # Transaction Destination Institution ID
+          m.iso094 = "487115"                                  # Transaction Originator Institution ID
+          m.iso100 = "00000000000"                             # Receiving Institution Identification Code
+          m.iso102 = "500004684881           "                 # Account Identification 1
+          m.iso116 = "5900000005"                              # POS Data
+          m
+        else
+          STDERR.puts "Unknown version: #{version} (expected 1987 or 1993)"
+          exit 1
+        end
+      end
+
+mti_string = msg.mti_string
 iso_bytes = msg.build(codec)
+json_output = msg.to_json
 
-payload = if add_header
-            length_prefix = iso_bytes.size.to_s.rjust(NETWORK_HEADER_SIZE, '0').to_slice
-            length_prefix + iso_bytes
-          else
+output_path = (output || "data/out/msg_#{mti_string}_built.bin").not_nil!
+
+payload = if !add_header
             iso_bytes
+          elsif scheme == "visa"
+            Scheme::VISA_HEADER_BYTES + iso_bytes
+          else
+            CrystalIso8583::Shared::Header::AsciiLengthPrefix.new(NETWORK_HEADER_SIZE).wrap(iso_bytes)
           end
 
-Dir.mkdir_p(File.dirname(output))
-File.open(output, "wb") { |f| f.write(payload) }
+Dir.mkdir_p(File.dirname(output_path))
+File.open(output_path, "wb") { |f| f.write(payload) }
 
-header_note = add_header ? "with #{NETWORK_HEADER_SIZE}-byte network header" : "no network header"
+header_note = if !add_header
+                "no network header"
+              elsif scheme == "visa"
+                "with #{Scheme::VISA_HEADER_SIZE}-byte Visa network header"
+              else
+                "with #{NETWORK_HEADER_SIZE}-byte network header"
+              end
+puts "Version     : #{version} (#{mti_string})"
+puts "Codec       : #{codec_name}"
 puts "ISO message : #{iso_bytes.size} bytes"
-puts "Written     : #{payload.size} bytes (#{header_note}) → #{output}"
-puts msg.to_json
+puts "Written     : #{payload.size} bytes (#{header_note}) → #{output_path}"
+puts json_output

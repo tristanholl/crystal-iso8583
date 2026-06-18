@@ -1,23 +1,33 @@
 module CrystalIso8583
   module Shared
     class Parser
-      def initialize(@dictionary : Hash(Int32, FieldDescriptor), @codec : Codec)
+      def initialize(@dictionary : Hash(Int32, FieldDescriptor), @codec : Codec, @debug : Bool = false, @log : IO = STDOUT)
       end
 
       def parse(bytes : Bytes) : Message
         pos = 0
 
-        mti = @codec.decode_mti(read_bytes(bytes, pos, @codec.mti_byte_size, "MTI"))
+        mti_bytes = read_bytes(bytes, pos, @codec.mti_byte_size, "MTI")
+        mti = @codec.decode_mti(mti_bytes)
+        trace("offset #{pos.to_s.rjust(4, '0')}  MTI            raw=#{mti_bytes.hexstring}  decoded=#{mti}")
         pos += @codec.mti_byte_size
 
         bitmap, bitmap_size = Bitmap.decode(bytes[pos..])
+        trace(
+          "offset #{pos.to_s.rjust(4, '0')}  BITMAP (#{bitmap_size}B)  secondary=#{bitmap.has_secondary?}  " \
+          "fields=#{bitmap.field_ids}"
+        )
         pos += bitmap_size
 
         fields = {} of Int32 => FieldValue
 
         bitmap.field_ids.each do |field_id|
           descriptor = @dictionary[field_id]?
-          next unless descriptor
+          unless descriptor
+            trace("offset #{pos.to_s.rjust(4, '0')}  F#{field_id}  not in dictionary, skipped")
+            next
+          end
+          field_start = pos
 
           actual_length = case descriptor.encoding
                           in FieldEncoding::FIXED
@@ -45,6 +55,12 @@ module CrystalIso8583
 
           decoded = @codec.decode_field(raw, descriptor.data_type, actual_length)
           fields[field_id] = FieldValue.new(raw, decoded)
+
+          trace(
+            "offset #{field_start.to_s.rjust(4, '0')}  F#{field_id} (#{descriptor.label})  " \
+            "#{descriptor.encoding}/#{descriptor.data_type} len=#{actual_length}  raw=#{raw.hexstring}  " \
+            "decoded=#{decoded.inspect}"
+          )
         end
 
         Message.new(mti: mti, bitmap: bitmap, fields: fields)
@@ -59,6 +75,10 @@ module CrystalIso8583
           )
         end
         bytes[pos, size]
+      end
+
+      private def trace(line : String) : Nil
+        @log.puts(line) if @debug
       end
     end
   end

@@ -1,7 +1,5 @@
 module CrystalIso8583
-  module V1993
-    # Abstract base for all V1993 typed messages.
-    # Wires the DataDictionary into build/parse so callers only pass a codec.
+  module V1987
     abstract class TypedMessage < Shared::TypedMessage
       def validate! : Nil
         dict = DataDictionary.fields

@@ -66,8 +66,8 @@ module CrystalIso8583
         )
       end
 
-      def self.parse(bytes : Bytes, codec : Codec, dictionary : Hash(Int32, FieldDescriptor))
-        message = Parser.new(dictionary, codec).parse(bytes)
+      def self.parse(bytes : Bytes, codec : Codec, dictionary : Hash(Int32, FieldDescriptor), debug : Bool = false, log : IO = STDOUT)
+        message = Parser.new(dictionary, codec, debug, log).parse(bytes)
         instance = new
         message.fields.each do |id, fv|
           instance.set_raw_field(id, fv.decoded)
