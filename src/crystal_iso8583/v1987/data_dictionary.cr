@@ -1,6 +1,11 @@
 module CrystalIso8583
   module V1987
     module DataDictionary
+      # Modeled on VisaNet BASE I, which deviates from the generic ISO
+      # 8583:1987 dictionary in two ways: fields 19 and 22 are 4 digits wide
+      # (not 3), and the "Additional Data"/reserved fields (54, 56, 60, 62,
+      # 63, 104, 123) carry raw binary/TLV sub-structures rather than text,
+      # so they're typed as DataType::B (rendered as hex) instead of AN/ANS.
       def self.fields : Hash(Int32, Shared::FieldDescriptor)
         fix = Shared::FieldEncoding::FIXED  # fixed-length field
         ll = Shared::FieldEncoding::LLVAR   # variable-length, 2-digit length prefix
@@ -29,10 +34,10 @@ module CrystalIso8583
            16 => field_descriptor(16, fix, 4, n, "Date, Conversion"),
            17 => field_descriptor(17, fix, 4, n, "Date, Capture"),
            18 => field_descriptor(18, fix, 4, n, "Merchant Type"),
-           19 => field_descriptor(19, fix, 3, n, "Acquiring Institution Country Code"),
+           19 => field_descriptor(19, fix, 4, n, "Acquiring Institution Country Code"),
            20 => field_descriptor(20, fix, 3, n, "PAN Extended, Country Code"),
            21 => field_descriptor(21, fix, 3, n, "Forwarding Institution Country Code"),
-           22 => field_descriptor(22, fix, 3, n, "Point of Service Entry Mode"),
+           22 => field_descriptor(22, fix, 4, n, "Point of Service Entry Mode"),
            23 => field_descriptor(23, fix, 3, n, "Application PAN Sequence Number"),
            24 => field_descriptor(24, fix, 3, n, "Network International Identifier"),
            25 => field_descriptor(25, fix, 2, n, "Point of Service Condition Code"),
@@ -64,16 +69,16 @@ module CrystalIso8583
            51 => field_descriptor(51, fix, 3, n, "Currency Code, Cardholder Billing"),
            52 => field_descriptor(52, fix, 8, b, "Personal Identification Number Data"),
            53 => field_descriptor(53, fix, 8, n, "Security Related Control Information"),
-           54 => field_descriptor(54, lll, 120, an, "Amounts, Additional"),
+           54 => field_descriptor(54, lll, 120, b, "Amounts, Additional"),
            55 => field_descriptor(55, lll, 999, an, "Reserved for ISO Use"),
-           56 => field_descriptor(56, lll, 999, an, "Reserved for ISO Use"),
+           56 => field_descriptor(56, lll, 999, b, "Reserved for ISO Use"),
            57 => field_descriptor(57, lll, 999, an, "Reserved for National Use"),
            58 => field_descriptor(58, lll, 999, an, "Reserved for National Use"),
            59 => field_descriptor(59, lll, 999, an, "Reserved for National Use"),
-           60 => field_descriptor(60, lll, 999, an, "Reserved for Private Use"),
+           60 => field_descriptor(60, lll, 999, b, "Reserved for Private Use"),
            61 => field_descriptor(61, lll, 999, an, "Reserved for Private Use"),
-           62 => field_descriptor(62, lll, 999, an, "Reserved for Private Use"),
-           63 => field_descriptor(63, lll, 999, an, "Reserved for Private Use"),
+           62 => field_descriptor(62, lll, 999, b, "Reserved for Private Use"),
+           63 => field_descriptor(63, lll, 999, b, "Reserved for Private Use"),
            64 => field_descriptor(64, fix, 8, b, "Message Authentication Code Field"),
            65 => field_descriptor(65, fix, 8, b, "Extended Bitmap Indicator"),
            66 => field_descriptor(66, fix, 1, n, "Settlement Code"),
@@ -114,7 +119,7 @@ module CrystalIso8583
           101 => field_descriptor(101, ll, 17, ans, "File Name"),
           102 => field_descriptor(102, ll, 28, ans, "Account Identification 1"),
           103 => field_descriptor(103, ll, 28, ans, "Account Identification 2"),
-          104 => field_descriptor(104, lll, 100, ans, "Transaction Description"),
+          104 => field_descriptor(104, lll, 100, b, "Transaction Description"),
           105 => field_descriptor(105, lll, 999, ans, "Reserved for ISO Use"),
           106 => field_descriptor(106, lll, 999, ans, "Reserved for ISO Use"),
           107 => field_descriptor(107, lll, 999, ans, "Reserved for ISO Use"),
@@ -133,7 +138,7 @@ module CrystalIso8583
           120 => field_descriptor(120, lll, 999, ans, "Reserved for Private Use"),
           121 => field_descriptor(121, lll, 999, ans, "Reserved for Private Use"),
           122 => field_descriptor(122, lll, 999, ans, "Reserved for Private Use"),
-          123 => field_descriptor(123, lll, 999, ans, "Reserved for Private Use"),
+          123 => field_descriptor(123, lll, 999, b, "Reserved for Private Use"),
           124 => field_descriptor(124, lll, 999, ans, "Reserved for Private Use"),
           125 => field_descriptor(125, lll, 999, ans, "Reserved for Private Use"),
           126 => field_descriptor(126, lll, 999, ans, "Reserved for Private Use"),

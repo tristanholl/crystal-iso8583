@@ -17,6 +17,7 @@ module CrystalIso8583
       field iso014, id: 14                 # Date, Expiration — C
       field iso015, id: 15                 # Date, Settlement — C
       field iso018, id: 18                 # Merchant Type — C
+      field iso019, id: 19                 # Acquiring Institution Country Code — C
       field iso022, id: 22, required: true # Point of Service Entry Mode — M
       field iso023, id: 23                 # Application PAN Sequence Number — C
       field iso024, id: 24                 # Network International Identifier — C
@@ -38,11 +39,14 @@ module CrystalIso8583
       field iso052, id: 52                 # Personal Identification Number Data — C
       field iso053, id: 53                 # Security Related Control Information — C
       field iso054, id: 54                 # Amounts, Additional — C
+      field iso056, id: 56                 # Reserved for ISO Use — O
       field iso060, id: 60                 # Reserved for Private Use — O
       field iso061, id: 61                 # Reserved for Private Use — O
       field iso062, id: 62                 # Reserved for Private Use — O
       field iso063, id: 63                 # Reserved for Private Use — O
       field iso064, id: 64                 # Message Authentication Code Field — C
+      field iso104, id: 104                # Transaction Description — O
+      field iso123, id: 123                # Reserved for Private Use — O
     end
   end
 end

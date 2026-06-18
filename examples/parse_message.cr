@@ -1,5 +1,6 @@
 require "../src/crystal_iso8583"
 require "option_parser"
+require "./scheme"
 
 # Parse ISO 8583 authorization request messages from binary files and write
 # each result as JSON. Supports both the 1987 (Msg0100) and 1993 (Msg1100)
@@ -23,15 +24,20 @@ input_glob = "data/in/*.in"
 output_dir = "data/out"
 header_size = NETWORK_HEADER_SIZE
 debug = false
+scheme = nil
+version_explicit = false
+codec_explicit = false
+header_size_explicit = false
 
 OptionParser.parse do |parser|
   parser.banner = "Usage: crystal run examples/parse_message.cr -- [options]"
 
-  parser.on("--version VERSION", "Message version: 1987 or 1993 (default: 1993)") { |v| version = v }
-  parser.on("--codec CODEC", "Codec: ascii, bcd, ebcdic, or configurable (default: ascii for 1993, ebcdic for 1987)") { |c| codec_name = c }
+  parser.on("--version VERSION", "Message version: 1987 or 1993 (default: 1993)") { |v| version = v; version_explicit = true }
+  parser.on("--codec CODEC", "Codec: ascii, bcd, ebcdic, or configurable (default: ascii for 1993, ebcdic for 1987)") { |c| codec_name = c; codec_explicit = true }
   parser.on("-i PATTERN", "--input PATTERN", "Input file glob (default: data/in/*.in)") { |p| input_glob = p }
   parser.on("-o DIR", "--output-dir DIR", "Output directory for JSON files (default: data/out)") { |d| output_dir = d }
-  parser.on("--header-size N", "Header bytes to strip before parsing (default: 4)") { |n| header_size = n.to_i }
+  parser.on("--header-size N", "Header bytes to strip before parsing (default: 4)") { |n| header_size = n.to_i; header_size_explicit = true }
+  parser.on("--scheme SCHEME", "Message scheme preset: visa (forces version 1987, configurable codec, 22-byte header)") { |s| scheme = s }
   parser.on("--debug", "Trace MTI/bitmap/field offsets and decoded values to STDOUT") { debug = true }
   parser.on("-h", "--help", "Show this help") { puts parser; exit 0 }
 
@@ -42,23 +48,12 @@ OptionParser.parse do |parser|
   end
 end
 
-codec_name ||= version == "1987" ? "ebcdic" : "ascii"
-
-codec = case codec_name
-        when "ascii"  then CrystalIso8583::Shared::Codec::ASCII.new
-        when "bcd"    then CrystalIso8583::Shared::Codec::BCD.new
-        when "ebcdic" then CrystalIso8583::Shared::Codec::EBCDIC.new
-        when "configurable"
-          CrystalIso8583::Shared::Codec::Configurable.new(
-            mti_encoding: CrystalIso8583::Shared::Codec::MtiEncoding::BCD,
-            length_encoding: CrystalIso8583::Shared::Codec::LengthEncoding::Binary,
-            numeric_encoding: CrystalIso8583::Shared::Codec::NumericEncoding::BCD,
-            text_encoding: CrystalIso8583::Shared::Codec::TextEncoding::EBCDIC,
-          )
-        else
-          STDERR.puts "Unknown codec: #{codec_name} (expected ascii, bcd, ebcdic, or configurable)"
-          exit 1
-        end
+resolved = Scheme.resolve(scheme, version, codec_name, header_size,
+  explicit_version: version_explicit, explicit_codec: codec_explicit, explicit_header_size: header_size_explicit)
+version = resolved.version
+codec_name = resolved.codec_name
+codec = resolved.codec
+header_size = resolved.header_size.not_nil!
 
 unless ["1987", "1993"].includes?(version)
   STDERR.puts "Unknown version: #{version} (expected 1987 or 1993)"
