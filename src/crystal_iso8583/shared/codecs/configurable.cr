@@ -114,7 +114,7 @@ module CrystalIso8583
             case @numeric_encoding
             when NumericEncoding::BCD    then BCDUtil.pack(str)
             when NumericEncoding::EBCDIC then ebcdic_encode(str)
-            else                               str.to_slice
+            else                              str.to_slice
             end
           elsif data_type == DataType::Z && @numeric_encoding == NumericEncoding::BCD
             BCDUtil.pack_track2(str)
