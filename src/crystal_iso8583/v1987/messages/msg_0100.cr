@@ -12,8 +12,8 @@ module CrystalIso8583
       field iso009, id: 9                  # Conversion Rate, Settlement — C
       field iso010, id: 10                 # Conversion Rate, Cardholder Billing — C
       field iso011, id: 11, required: true # Systems Trace Audit Number — M
-      field iso012, id: 12, required: true # Time, Local Transaction — M
-      field iso013, id: 13, required: true # Date, Local Transaction — M
+      field iso012, id: 12                 # Time, Local Transaction — M
+      field iso013, id: 13                 # Date, Local Transaction — M
       field iso014, id: 14                 # Date, Expiration — C
       field iso015, id: 15                 # Date, Settlement — C
       field iso018, id: 18                 # Merchant Type — C
