@@ -45,22 +45,22 @@ codec = case codec_name
 msg = case version
       when "1987"
         m = CrystalIso8583::V1987::Msg0100.new
-        m.iso002 = "4349750003416619"   # Primary Account Number (PAN)
-        m.iso003 = "000000"             # Processing Code
-        m.iso004 = "000000001000"       # Amount, Transaction
-        m.iso007 = "0302143124"         # Date and Time, Transmission
-        m.iso011 = "171374"             # Systems Trace Audit Number (STAN)
-        m.iso012 = "143124"             # Time, Local Transaction
-        m.iso013 = "0302"               # Date, Local Transaction
-        m.iso014 = "2402"               # Date, Expiration
-        m.iso022 = "051"                # Point of Service Entry Mode
-        m.iso025 = "00"                 # Point of Service Condition Code
-        m.iso032 = "487115"             # Acquiring Institution Identification Code
-        m.iso037 = "106113171374"       # Retrieval Reference Number
-        m.iso041 = "99999999"           # Card Acceptor Terminal Identification
-        m.iso042 = "000000000206535"    # Card Acceptor Identification Code (15 chars)
-        m.iso043 = "Revolut*8624*GBR"   # Card Acceptor Name/Location (fixed 40 chars, padded by builder)
-        m.iso049 = "978"                # Currency Code, Transaction (EUR)
+        m.iso002 = "4349750003416619" # Primary Account Number (PAN)
+        m.iso003 = "000000"           # Processing Code
+        m.iso004 = "000000001000"     # Amount, Transaction
+        m.iso007 = "0302143124"       # Date and Time, Transmission
+        m.iso011 = "171374"           # Systems Trace Audit Number (STAN)
+        m.iso012 = "143124"           # Time, Local Transaction
+        m.iso013 = "0302"             # Date, Local Transaction
+        m.iso014 = "2402"             # Date, Expiration
+        m.iso022 = "051"              # Point of Service Entry Mode
+        m.iso025 = "00"               # Point of Service Condition Code
+        m.iso032 = "487115"           # Acquiring Institution Identification Code
+        m.iso037 = "106113171374"     # Retrieval Reference Number
+        m.iso041 = "99999999"         # Card Acceptor Terminal Identification
+        m.iso042 = "000000000206535"  # Card Acceptor Identification Code (15 chars)
+        m.iso043 = "Revolut*8624*GBR" # Card Acceptor Name/Location (fixed 40 chars, padded by builder)
+        m.iso049 = "978"              # Currency Code, Transaction (EUR)
         m
       when "1993"
         m = CrystalIso8583::V1993::Msg1100.new
@@ -89,7 +89,7 @@ msg = case version
         m.iso094 = "487115"                                  # Transaction Originator Institution ID
         m.iso100 = "00000000000"                             # Receiving Institution Identification Code
         m.iso102 = "500004684881           "                 # Account Identification 1
-        m.iso116 = "5900000005"                               # POS Data
+        m.iso116 = "5900000005"                              # POS Data
         m
       else
         STDERR.puts "Unknown version: #{version} (expected 1987 or 1993)"
