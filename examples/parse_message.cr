@@ -10,13 +10,11 @@ require "./scheme"
 # ASCII decimal network length indicator. The header is stripped before parsing.
 NETWORK_HEADER_SIZE = 4
 
-# The --codec configurable option builds a Codec::Configurable with BCD
-# MTI/numeric fields, a single raw binary length-prefix byte, and EBCDIC
-# text fields — the mix used by real-world networks like Visa BASE I. Field
-# dictionaries and header sizes vary by deployment, though: see
-# examples/parse_visa_base1.cr for a fully worked, validated example
-# against a real Visa BASE I 0100 message, including the dictionary
-# overrides such deployments often need.
+# --scheme visa (or --codec configurable) builds a Codec::Configurable with
+# BCD MTI/numeric fields, a single raw binary length-prefix byte, and EBCDIC
+# text fields, plus the 22-byte header — the mix used by real-world Visa
+# BASE I deployments. Run with `--scheme visa -i path/to/visa.in` to parse
+# such a message directly; no separate example is needed.
 
 version = "1993"
 codec_name = nil
