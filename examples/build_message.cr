@@ -101,8 +101,7 @@ output ||= "data/out/msg_#{msg.mti_string}_built.bin"
 iso_bytes = msg.build(codec)
 
 payload = if add_header
-            length_prefix = iso_bytes.size.to_s.rjust(NETWORK_HEADER_SIZE, '0').to_slice
-            length_prefix + iso_bytes
+            CrystalIso8583::Shared::Header::AsciiLengthPrefix.new(NETWORK_HEADER_SIZE).wrap(iso_bytes)
           else
             iso_bytes
           end

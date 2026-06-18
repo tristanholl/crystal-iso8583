@@ -21,8 +21,8 @@ module CrystalIso8583
         build(codec, DataDictionary.fields)
       end
 
-      def self.parse(bytes : Bytes, codec : Shared::Codec)
-        parse(bytes, codec, DataDictionary.fields)
+      def self.parse(bytes : Bytes, codec : Shared::Codec, debug : Bool = false, log : IO = STDOUT)
+        parse(bytes, codec, DataDictionary.fields, debug, log)
       end
     end
   end
