@@ -19,10 +19,10 @@ require "../src/crystal_iso8583"
 path = ARGV[0]? || abort "Usage: crystal run examples/parse_visa_base1.cr -- <file>"
 
 codec = CrystalIso8583::Shared::Codec::Configurable.new(
-  mti_encoding: CrystalIso8583::Shared::SubEncoding::BCD,
-  length_encoding: CrystalIso8583::Shared::SubEncoding::Binary,
-  numeric_encoding: CrystalIso8583::Shared::SubEncoding::BCD,
-  text_encoding: CrystalIso8583::Shared::SubEncoding::EBCDIC,
+  mti_encoding: CrystalIso8583::Shared::Codec::MtiEncoding::BCD,
+  length_encoding: CrystalIso8583::Shared::Codec::LengthEncoding::Binary,
+  numeric_encoding: CrystalIso8583::Shared::Codec::NumericEncoding::BCD,
+  text_encoding: CrystalIso8583::Shared::Codec::TextEncoding::EBCDIC,
 )
 
 dictionary = CrystalIso8583::V1987::DataDictionary.fields.dup

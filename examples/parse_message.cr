@@ -50,10 +50,10 @@ codec = case codec_name
         when "ebcdic" then CrystalIso8583::Shared::Codec::EBCDIC.new
         when "configurable"
           CrystalIso8583::Shared::Codec::Configurable.new(
-            mti_encoding: CrystalIso8583::Shared::SubEncoding::BCD,
-            length_encoding: CrystalIso8583::Shared::SubEncoding::Binary,
-            numeric_encoding: CrystalIso8583::Shared::SubEncoding::BCD,
-            text_encoding: CrystalIso8583::Shared::SubEncoding::EBCDIC,
+            mti_encoding: CrystalIso8583::Shared::Codec::MtiEncoding::BCD,
+            length_encoding: CrystalIso8583::Shared::Codec::LengthEncoding::Binary,
+            numeric_encoding: CrystalIso8583::Shared::Codec::NumericEncoding::BCD,
+            text_encoding: CrystalIso8583::Shared::Codec::TextEncoding::EBCDIC,
           )
         else
           STDERR.puts "Unknown codec: #{codec_name} (expected ascii, bcd, ebcdic, or configurable)"

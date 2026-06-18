@@ -18,37 +18,28 @@ module CrystalIso8583
         include Codec
 
         def initialize(
-          @mti_encoding : SubEncoding = SubEncoding::ASCII,
-          @length_encoding : SubEncoding = SubEncoding::ASCII,
-          @numeric_encoding : SubEncoding = SubEncoding::ASCII,
-          @text_encoding : SubEncoding = SubEncoding::ASCII,
+          @mti_encoding : MtiEncoding = MtiEncoding::ASCII,
+          @length_encoding : LengthEncoding = LengthEncoding::ASCII,
+          @numeric_encoding : NumericEncoding = NumericEncoding::ASCII,
+          @text_encoding : TextEncoding = TextEncoding::ASCII,
           @binary_length_byte_size : Int32 = 1,
         )
-          unless {SubEncoding::ASCII, SubEncoding::BCD, SubEncoding::EBCDIC}.includes?(@mti_encoding)
-            raise ArgumentError.new("mti_encoding must be ASCII, BCD, or EBCDIC, got #{@mti_encoding}")
-          end
-          unless {SubEncoding::ASCII, SubEncoding::BCD, SubEncoding::EBCDIC}.includes?(@numeric_encoding)
-            raise ArgumentError.new("numeric_encoding must be ASCII, BCD, or EBCDIC, got #{@numeric_encoding}")
-          end
-          unless {SubEncoding::ASCII, SubEncoding::EBCDIC}.includes?(@text_encoding)
-            raise ArgumentError.new("text_encoding must be ASCII or EBCDIC, got #{@text_encoding}")
-          end
         end
 
         def mti_byte_size : Int32
-          @mti_encoding == SubEncoding::BCD ? 2 : 4
+          @mti_encoding == MtiEncoding::BCD ? 2 : 4
         end
 
         def length_byte_size(digits : Int32) : Int32
           case @length_encoding
-          when SubEncoding::BCD    then (digits + 1) // 2
-          when SubEncoding::Binary then @binary_length_byte_size
-          else                          digits
+          when LengthEncoding::BCD    then (digits + 1) // 2
+          when LengthEncoding::Binary then @binary_length_byte_size
+          else                             digits
           end
         end
 
         def field_byte_size(length : Int32, data_type : DataType) : Int32
-          if data_type == DataType::N && @numeric_encoding == SubEncoding::BCD
+          if data_type == DataType::N && @numeric_encoding == NumericEncoding::BCD
             (length + 1) // 2
           else
             length
@@ -57,16 +48,16 @@ module CrystalIso8583
 
         def encode_mti(mti : MTI) : Bytes
           case @mti_encoding
-          when SubEncoding::BCD    then BCDUtil.pack(mti.to_s)
-          when SubEncoding::EBCDIC then ebcdic_encode(mti.to_s)
+          when MtiEncoding::BCD    then BCDUtil.pack(mti.to_s)
+          when MtiEncoding::EBCDIC then ebcdic_encode(mti.to_s)
           else                          mti.to_s.to_slice
           end
         end
 
         def decode_mti(bytes : Bytes) : MTI
           str = case @mti_encoding
-                when SubEncoding::BCD    then BCDUtil.unpack(bytes[0, 2])
-                when SubEncoding::EBCDIC then ebcdic_decode(bytes[0, 4])
+                when MtiEncoding::BCD    then BCDUtil.unpack(bytes[0, 2])
+                when MtiEncoding::EBCDIC then ebcdic_decode(bytes[0, 4])
                 else                          String.new(bytes[0, 4])
                 end
           MTI.parse(str)
@@ -74,11 +65,11 @@ module CrystalIso8583
 
         def encode_length(length : Int32, digits : Int32) : Bytes
           case @length_encoding
-          when SubEncoding::BCD
+          when LengthEncoding::BCD
             BCDUtil.pack(length.to_s.rjust(digits + (digits % 2), '0'))
-          when SubEncoding::EBCDIC
+          when LengthEncoding::EBCDIC
             ebcdic_encode(length.to_s.rjust(digits, '0'))
-          when SubEncoding::Binary
+          when LengthEncoding::Binary
             byte_size = length_byte_size(digits)
             Bytes.new(byte_size) { |i| ((length >> (8 * (byte_size - 1 - i))) & 0xFF).to_u8 }
           else
@@ -88,13 +79,13 @@ module CrystalIso8583
 
         def decode_length(bytes : Bytes, digits : Int32) : Int32
           case @length_encoding
-          when SubEncoding::BCD
+          when LengthEncoding::BCD
             byte_count = (digits + 1) // 2
             full = BCDUtil.unpack(bytes[0, byte_count])
             full[full.size - digits, digits].to_i
-          when SubEncoding::EBCDIC
+          when LengthEncoding::EBCDIC
             ebcdic_decode(bytes[0, digits]).to_i
-          when SubEncoding::Binary
+          when LengthEncoding::Binary
             byte_size = length_byte_size(digits)
             bytes[0, byte_size].reduce(0) { |acc, b| (acc << 8) | b }
           else
@@ -103,11 +94,11 @@ module CrystalIso8583
         end
 
         def encode_string(str : String) : Bytes
-          @text_encoding == SubEncoding::EBCDIC ? ebcdic_encode(str) : str.to_slice
+          @text_encoding == TextEncoding::EBCDIC ? ebcdic_encode(str) : str.to_slice
         end
 
         def decode_string(bytes : Bytes) : String
-          @text_encoding == SubEncoding::EBCDIC ? ebcdic_decode(bytes) : String.new(bytes)
+          @text_encoding == TextEncoding::EBCDIC ? ebcdic_decode(bytes) : String.new(bytes)
         end
 
         def encode_field(str : String, data_type : DataType) : Bytes
@@ -115,12 +106,12 @@ module CrystalIso8583
             str.to_slice
           elsif data_type == DataType::N
             case @numeric_encoding
-            when SubEncoding::BCD    then BCDUtil.pack(str)
-            when SubEncoding::EBCDIC then ebcdic_encode(str)
-            else                          str.to_slice
+            when NumericEncoding::BCD    then BCDUtil.pack(str)
+            when NumericEncoding::EBCDIC then ebcdic_encode(str)
+            else                               str.to_slice
             end
           else
-            @text_encoding == SubEncoding::EBCDIC ? ebcdic_encode(str) : str.to_slice
+            @text_encoding == TextEncoding::EBCDIC ? ebcdic_encode(str) : str.to_slice
           end
         end
 
@@ -130,16 +121,16 @@ module CrystalIso8583
             bytes.hexstring
           when DataType::N
             case @numeric_encoding
-            when SubEncoding::BCD
+            when NumericEncoding::BCD
               unpacked = BCDUtil.unpack(bytes)
               unpacked.size > length ? unpacked[unpacked.size - length, length] : unpacked
-            when SubEncoding::EBCDIC
+            when NumericEncoding::EBCDIC
               ebcdic_decode(bytes)
             else
               String.new(bytes)
             end
           else
-            @text_encoding == SubEncoding::EBCDIC ? ebcdic_decode(bytes[0, length]) : String.new(bytes[0, length])
+            @text_encoding == TextEncoding::EBCDIC ? ebcdic_decode(bytes[0, length]) : String.new(bytes[0, length])
           end
         end
 
