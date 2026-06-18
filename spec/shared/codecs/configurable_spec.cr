@@ -99,6 +99,24 @@ describe Configurable do
     end
   end
 
+  describe "track 2 (Z) field data" do
+    it "BCD-packs track 2 data, including the '=' separator, when numeric_encoding is BCD" do
+      codec = Configurable.new(numeric_encoding: NumericEncoding::BCD)
+      track2 = "1234567890123456=2512101123456789"
+      encoded = codec.encode_field(track2, DataType::Z)
+      codec.field_byte_size(track2.size, DataType::Z).should eq 17
+      encoded.size.should eq 17
+      codec.decode_field(encoded, DataType::Z, track2.size).should eq track2
+    end
+
+    it "falls back to text_encoding for track 2 data when numeric_encoding isn't BCD" do
+      codec = Configurable.new(numeric_encoding: NumericEncoding::ASCII, text_encoding: TextEncoding::EBCDIC)
+      track2 = "1234=5678"
+      encoded = codec.encode_field(track2, DataType::Z)
+      codec.decode_field(encoded, DataType::Z, track2.size).should eq track2
+    end
+  end
+
   it "always treats binary field data as raw bytes regardless of other settings" do
     codec = Configurable.new(numeric_encoding: NumericEncoding::BCD, text_encoding: TextEncoding::EBCDIC)
     encoded = codec.encode_field("aabb", DataType::B)

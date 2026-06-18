@@ -4,7 +4,7 @@ module CrystalIso8583
       # -----------------------------------------------------------------------
       # Configurable codec — independently selects the wire encoding used for
       # the MTI, variable-length prefixes, numeric (N) field data, and
-      # alphanumeric (AN/ANS/Z) field data. Useful for real-world networks
+      # alphanumeric (AN/ANS) field data. Useful for real-world networks
       # (e.g. VisaNet BASE I) that mix encodings: BCD-packed MTI and numeric
       # fields, raw binary length prefixes, and EBCDIC text fields.
       #
@@ -13,6 +13,12 @@ module CrystalIso8583
       # (`binary_length_byte_size`, default 1) for both LLVAR and LLLVAR
       # fields, since real networks typically use a single byte for both
       # rather than scaling the prefix width with the nominal digit count.
+      #
+      # Track 2 (Z) field data follows numeric_encoding when it's BCD —
+      # packed via the Track 2 nibble mapping (digits, '=' separator, 'F'
+      # pad nibble) rather than plain digit BCD — since real networks BCD-pack
+      # Track 2 the same way they BCD-pack numeric fields. Otherwise it falls
+      # back to text_encoding, same as AN/ANS.
       # -----------------------------------------------------------------------
       class Configurable
         include Codec
@@ -39,7 +45,7 @@ module CrystalIso8583
         end
 
         def field_byte_size(length : Int32, data_type : DataType) : Int32
-          if data_type == DataType::N && @numeric_encoding == NumericEncoding::BCD
+          if (data_type == DataType::N || data_type == DataType::Z) && @numeric_encoding == NumericEncoding::BCD
             (length + 1) // 2
           else
             length
@@ -110,6 +116,8 @@ module CrystalIso8583
             when NumericEncoding::EBCDIC then ebcdic_encode(str)
             else                               str.to_slice
             end
+          elsif data_type == DataType::Z && @numeric_encoding == NumericEncoding::BCD
+            BCDUtil.pack_track2(str)
           else
             @text_encoding == TextEncoding::EBCDIC ? ebcdic_encode(str) : str.to_slice
           end
@@ -128,6 +136,13 @@ module CrystalIso8583
               ebcdic_decode(bytes)
             else
               String.new(bytes)
+            end
+          when DataType::Z
+            if @numeric_encoding == NumericEncoding::BCD
+              unpacked = BCDUtil.unpack_track2(bytes)
+              unpacked.size > length ? unpacked[0, length] : unpacked
+            else
+              @text_encoding == TextEncoding::EBCDIC ? ebcdic_decode(bytes[0, length]) : String.new(bytes[0, length])
             end
           else
             @text_encoding == TextEncoding::EBCDIC ? ebcdic_decode(bytes[0, length]) : String.new(bytes[0, length])
