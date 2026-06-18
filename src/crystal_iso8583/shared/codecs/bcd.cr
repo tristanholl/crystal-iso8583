@@ -50,7 +50,11 @@ module CrystalIso8583
         end
 
         def encode_field(str : String, data_type : DataType) : Bytes
-          data_type == DataType::N ? BCDUtil.pack(str) : str.to_slice
+          case data_type
+          when DataType::N then BCDUtil.pack(str)
+          when DataType::B then str.hexbytes
+          else                  str.to_slice
+          end
         end
 
         def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String

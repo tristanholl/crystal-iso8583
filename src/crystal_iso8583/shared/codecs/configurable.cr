@@ -109,7 +109,7 @@ module CrystalIso8583
 
         def encode_field(str : String, data_type : DataType) : Bytes
           if data_type == DataType::B
-            str.to_slice
+            str.hexbytes
           elsif data_type == DataType::N
             case @numeric_encoding
             when NumericEncoding::BCD    then BCDUtil.pack(str)

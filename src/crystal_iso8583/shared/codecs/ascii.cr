@@ -44,7 +44,7 @@ module CrystalIso8583
         end
 
         def encode_field(str : String, data_type : DataType) : Bytes
-          str.to_slice
+          data_type == DataType::B ? str.hexbytes : str.to_slice
         end
 
         def decode_field(bytes : Bytes, data_type : DataType, length : Int32) : String
