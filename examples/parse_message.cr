@@ -1,14 +1,16 @@
 require "../src/crystal_iso8583"
 require "option_parser"
 
-# Parse ISO 8583 v1993 authorization request (1100) messages from binary files
-# and write each result as JSON.
+# Parse ISO 8583 authorization request messages from binary files and write
+# each result as JSON. Supports both the 1987 (Msg0100) and 1993 (Msg1100)
+# message versions.
 #
 # ISO 8583 messages transported over TCP are typically prefixed with a 4-byte
 # ASCII decimal network length indicator. The header is stripped before parsing.
 NETWORK_HEADER_SIZE = 4
 
-codec = CrystalIso8583::Shared::Codec::ASCII.new
+version = "1993"
+codec_name = nil
 input_glob = "data/in/*.in"
 output_dir = "data/out"
 header_size = NETWORK_HEADER_SIZE
@@ -16,6 +18,8 @@ header_size = NETWORK_HEADER_SIZE
 OptionParser.parse do |parser|
   parser.banner = "Usage: crystal run examples/parse_message.cr -- [options]"
 
+  parser.on("--version VERSION", "Message version: 1987 or 1993 (default: 1993)") { |v| version = v }
+  parser.on("--codec CODEC", "Codec: ascii, bcd, or ebcdic (default: ascii for 1993, ebcdic for 1987)") { |c| codec_name = c }
   parser.on("-i PATTERN", "--input PATTERN", "Input file glob (default: data/in/*.in)") { |p| input_glob = p }
   parser.on("-o DIR", "--output-dir DIR", "Output directory for JSON files (default: data/out)") { |d| output_dir = d }
   parser.on("--header-size N", "Header bytes to strip before parsing (default: 4)") { |n| header_size = n.to_i }
@@ -28,11 +32,27 @@ OptionParser.parse do |parser|
   end
 end
 
+codec_name ||= version == "1987" ? "ebcdic" : "ascii"
+
+codec = case codec_name
+        when "ascii"  then CrystalIso8583::Shared::Codec::ASCII.new
+        when "bcd"    then CrystalIso8583::Shared::Codec::BCD.new
+        when "ebcdic" then CrystalIso8583::Shared::Codec::EBCDIC.new
+        else
+          STDERR.puts "Unknown codec: #{codec_name} (expected ascii, bcd, or ebcdic)"
+          exit 1
+        end
+
+unless ["1987", "1993"].includes?(version)
+  STDERR.puts "Unknown version: #{version} (expected 1987 or 1993)"
+  exit 1
+end
+
 Dir[input_glob].each do |input_file|
   puts "Processing #{input_file}..."
   raw = File.open(input_file, "rb") { |f| f.getb_to_end }
   bytes = raw[header_size..]
-  msg = CrystalIso8583::V1993::Msg1100.parse(bytes, codec)
+  msg = version == "1987" ? CrystalIso8583::V1987::Msg0100.parse(bytes, codec) : CrystalIso8583::V1993::Msg1100.parse(bytes, codec)
   output_file = File.join(output_dir, File.basename(input_file).sub(/\.in$/, ".json"))
   File.write(output_file, msg.to_json)
 rescue e
