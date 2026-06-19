@@ -2,9 +2,10 @@
 
 [![CI](https://github.com/tristanholl/crystal-iso8583/actions/workflows/ci.yml/badge.svg)](https://github.com/tristanholl/crystal-iso8583/actions/workflows/ci.yml)
 
-A production-grade Crystal implementation of the ISO 8583 financial transaction
-message standard — built for payment switches, acquirers, issuers, and
-POS/ATM integrations that need correct, predictable message handling.
+A Crystal showcase for processing ISO 8583 financial transaction messages —
+demonstrating typed message handling, configurable wire encodings, and
+transport framing as a foundation for building against a specific
+processor's or card scheme's interface.
 
 ISO 8583 is the international standard for financial transaction
 card-originated messages. It defines a message format and a communication
@@ -15,12 +16,12 @@ using payment cards.
 
 - **Type safety where it matters.** Typed message classes catch invalid field
   access at compile time and missing required fields at build time, with
-  errors naming the exact field involved — no more debugging malformed
-  messages in production.
-- **Built for real-world dialects.** Payment networks rarely implement
+  errors naming the exact field involved.
+- **Models real-world dialects.** Payment networks rarely implement
   textbook ISO 8583. A configurable codec lets you mix and match wire
-  encodings per concern (MTI, length prefixes, numeric data, text data) to
-  match the dialect your processor or network actually speaks.
+  encodings per concern (MTI, length prefixes, numeric data, text data),
+  showing how to adapt the message handling to the dialect a given
+  processor or network actually speaks.
 - **Zero runtime dependencies.** Nothing to audit beyond the Crystal standard
   library — a meaningful property for institutions with strict
   dependency-review requirements.
@@ -61,7 +62,7 @@ using payment cards.
 - JSON serialization of parsed and built messages
 
 **Engineering**
-- Clean, zero-dependency Crystal library
+- Clean, zero-dependency Crystal codebase
 - Requires Crystal ≥ 1.14.0
 
 ## Installation
@@ -213,8 +214,8 @@ make console  # bash in container
 ## Contributing
 
 Contributions are welcome — bug reports, feature requests, and pull requests
-all help make this library more reliable for everyone integrating with ISO
-8583 networks.
+all help make this a better reference and foundation for people building
+ISO 8583 integrations.
 
 1. **Open an issue first for non-trivial changes.** This avoids duplicated
    effort and lets us agree on the approach before you invest time in an
