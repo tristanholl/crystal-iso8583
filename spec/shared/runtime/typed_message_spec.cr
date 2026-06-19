@@ -1,4 +1,4 @@
-require "../spec_helper"
+require "../../spec_helper"
 
 private class TestMsg < CrystalIso8583::Shared::TypedMessage
   mti "9999"

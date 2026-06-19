@@ -1,4 +1,4 @@
-require "../spec_helper"
+require "../../spec_helper"
 
 private def make_message(mti : String, fields : Hash(Int32, String))
   fvs = fields.transform_values { |v| CrystalIso8583::Shared::FieldValue.new(Bytes.new(0), v) }

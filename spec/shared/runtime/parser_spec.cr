@@ -1,4 +1,4 @@
-require "../spec_helper"
+require "../../spec_helper"
 
 describe CrystalIso8583::Shared::Parser do
   it "writes a trace line per MTI/bitmap/field when debug is enabled" do

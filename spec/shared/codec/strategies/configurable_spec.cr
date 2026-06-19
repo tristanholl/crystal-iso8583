@@ -1,4 +1,4 @@
-require "../../spec_helper"
+require "../../../spec_helper"
 
 private alias Configurable = CrystalIso8583::Shared::Codec::Configurable
 private alias MtiEncoding = CrystalIso8583::Shared::Codec::MtiEncoding
