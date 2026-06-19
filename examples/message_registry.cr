@@ -8,6 +8,15 @@ require "../src/crystal_iso8583"
 module MessageRegistry
   BUILDERS = {
     "0100" => -> { CrystalIso8583::V1987::Msg0100.new },
+    "0110" => -> { CrystalIso8583::V1987::Msg0110.new },
+    "0120" => -> { CrystalIso8583::V1987::Msg0120.new },
+    "0121" => -> { CrystalIso8583::V1987::Msg0121.new },
+    "0130" => -> { CrystalIso8583::V1987::Msg0130.new },
+    "0420" => -> { CrystalIso8583::V1987::Msg0420.new },
+    "0421" => -> { CrystalIso8583::V1987::Msg0421.new },
+    "0430" => -> { CrystalIso8583::V1987::Msg0430.new },
+    "0804" => -> { CrystalIso8583::V1987::Msg0804.new },
+    "0814" => -> { CrystalIso8583::V1987::Msg0814.new },
     "1100" => -> { CrystalIso8583::V1993::Msg1100.new },
     "1110" => -> { CrystalIso8583::V1993::Msg1110.new },
     "1120" => -> { CrystalIso8583::V1993::Msg1120.new },

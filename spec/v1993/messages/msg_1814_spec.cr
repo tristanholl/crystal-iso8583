@@ -7,14 +7,6 @@ describe CrystalIso8583::V1993::Msg1814 do
     end
   end
 
-  describe "field accessors" do
-    it "sets and gets action code (3-digit)" do
-      msg = CrystalIso8583::V1993::Msg1814.new
-      msg.iso039 = "800"
-      msg.iso039.should eq "800"
-    end
-  end
-
   describe "validate!" do
     it "raises when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do

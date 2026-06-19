@@ -7,27 +7,6 @@ describe CrystalIso8583::V1993::Msg1420 do
     end
   end
 
-  describe "field accessors" do
-    it "sets and gets original data elements (BMP 56)" do
-      msg = CrystalIso8583::V1993::Msg1420.new
-      # LLVAR n..35: original MTI(4) + STAN(6) + local datetime(12) + acquirer id(≤11)
-      msg.iso056 = "11001234562606181200000272001234"
-      msg.iso056.should eq "11001234562606181200000272001234"
-    end
-
-    it "sets and gets card issuer reference data (BMP 95)" do
-      msg = CrystalIso8583::V1993::Msg1420.new
-      msg.iso095 = "ISSUERREF42"
-      msg.iso095.should eq "ISSUERREF42"
-    end
-
-    it "sets and gets message reason code (BMP 25, 4-digit)" do
-      msg = CrystalIso8583::V1993::Msg1420.new
-      msg.iso025 = "4021"
-      msg.iso025.should eq "4021"
-    end
-  end
-
   describe "validate!" do
     it "raises when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do

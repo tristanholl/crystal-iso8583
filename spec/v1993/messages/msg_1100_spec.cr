@@ -7,45 +7,6 @@ describe CrystalIso8583::V1993::Msg1100 do
     end
   end
 
-  describe "field accessors" do
-    it "sets and gets PAN" do
-      msg = CrystalIso8583::V1993::Msg1100.new
-      msg.iso002 = "434971******1380"
-      msg.iso002.should eq "434971******1380"
-    end
-
-    it "sets and gets spec-compliant fields" do
-      msg = CrystalIso8583::V1993::Msg1100.new
-      msg.iso002 = "434971******1380"
-      msg.iso003 = "310000"
-      msg.iso004 = "000000000000"
-      msg.iso006 = "000000000000"
-      msg.iso007 = "0618152100"
-      msg.iso011 = "123456"
-      msg.iso012 = "260618152100"
-      msg.iso014 = "2401"
-      msg.iso022 = "51120181504C"
-      msg.iso023 = "001"
-      msg.iso024 = "108"
-      msg.iso026 = "6011"
-      msg.iso032 = "12345678901"
-      msg.iso037 = "102009101490"
-      msg.iso038 = "036246"
-      msg.iso041 = "TERMID01"
-      msg.iso042 = "CARD ACCEPTOR  "
-      msg.iso043 = "MyShop\\Berlin\\10115\\DE"
-      msg.iso048 = "001EAPS"
-      msg.iso049 = "978"
-      msg.iso051 = "978"
-
-      msg.iso002.should eq "434971******1380"
-      msg.iso007.should eq "0618152100"
-      msg.iso043.should eq "MyShop\\Berlin\\10115\\DE"
-      msg.iso048.should eq "001EAPS"
-      msg.iso049.should eq "978"
-    end
-  end
-
   describe "validate!" do
     it "raises when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do

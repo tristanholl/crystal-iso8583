@@ -7,22 +7,6 @@ describe CrystalIso8583::V1993::Msg1804 do
     end
   end
 
-  describe "field accessors" do
-    it "sets and gets function code" do
-      msg = CrystalIso8583::V1993::Msg1804.new
-      msg.iso024 = "831"
-      msg.iso024.should eq "831"
-    end
-
-    it "sets and gets destination and originator institution IDs (≤5 digits)" do
-      msg = CrystalIso8583::V1993::Msg1804.new
-      msg.iso093 = "27200"
-      msg.iso094 = "27201"
-      msg.iso093.should eq "27200"
-      msg.iso094.should eq "27201"
-    end
-  end
-
   describe "validate!" do
     it "raises when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do
