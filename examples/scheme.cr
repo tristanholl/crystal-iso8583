@@ -7,14 +7,6 @@ module Scheme
   VISA_CODEC_NAME  = "configurable"
   VISA_HEADER_SIZE = 22
 
-  # The literal 22-byte proprietary network header (TPDU + "PR4" record-type
-  # tag) observed on a real Visa BASE I sample, used to reproduce that
-  # message byte-for-byte when --scheme visa builds with a header.
-  VISA_HEADER_BYTES = Bytes[
-    0x16, 0x01, 0x02, 0x01, 0x50, 0x52, 0x34, 0x01, 0x00, 0x00, 0x00, 0x08,
-    0x10, 0x00, 0x46, 0x84, 0x40, 0x09, 0x08, 0x03, 0xa2, 0x01,
-  ]
-
   def self.build_codec(codec_name : String) : CrystalIso8583::Shared::Codec
     case codec_name
     when "ascii"        then CrystalIso8583::Shared::Codec::ASCII.new

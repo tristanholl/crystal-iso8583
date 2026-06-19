@@ -71,7 +71,7 @@ output_path = (output || "data/out/msg_#{mti_string}_built.bin").not_nil!
 payload = if !add_header
             iso_bytes
           elsif scheme == "visa"
-            Scheme::VISA_HEADER_BYTES + iso_bytes
+            Bytes.new(Scheme::VISA_HEADER_SIZE) + iso_bytes
           else
             CrystalIso8583::Shared::Header::AsciiLengthPrefix.new(NETWORK_HEADER_SIZE).wrap(iso_bytes)
           end
