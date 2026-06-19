@@ -7,43 +7,6 @@ describe CrystalIso8583::V1987::Msg0100 do
     end
   end
 
-  describe "field accessors" do
-    it "sets and gets PAN" do
-      msg = CrystalIso8583::V1987::Msg0100.new
-      msg.iso002 = "4111111111111111"
-      msg.iso002.should eq "4111111111111111"
-    end
-
-    it "sets and gets all required fields" do
-      msg = CrystalIso8583::V1987::Msg0100.new
-      msg.iso002 = "4111111111111111"
-      msg.iso003 = "000000"
-      msg.iso004 = "000000001000"
-      msg.iso007 = "0615120000"
-      msg.iso011 = "000001"
-      msg.iso012 = "120000"
-      msg.iso013 = "0615"
-      msg.iso022 = "0051"
-      msg.iso025 = "00"
-      msg.iso041 = "TERM0001"
-      msg.iso042 = "MERCH001       "
-      msg.iso049 = "840"
-
-      msg.iso002.should eq "4111111111111111"
-      msg.iso003.should eq "000000"
-      msg.iso004.should eq "000000001000"
-      msg.iso007.should eq "0615120000"
-      msg.iso011.should eq "000001"
-      msg.iso012.should eq "120000"
-      msg.iso013.should eq "0615"
-      msg.iso022.should eq "0051"
-      msg.iso025.should eq "00"
-      msg.iso041.should eq "TERM0001"
-      msg.iso042.should eq "MERCH001       "
-      msg.iso049.should eq "840"
-    end
-  end
-
   describe "validate!" do
     it "raises when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do

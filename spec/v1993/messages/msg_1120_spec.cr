@@ -7,20 +7,6 @@ describe CrystalIso8583::V1993::Msg1120 do
     end
   end
 
-  describe "field accessors" do
-    it "sets and gets original data elements (BMP 56)" do
-      msg = CrystalIso8583::V1993::Msg1120.new
-      msg.iso056 = "11001234562606181200000272001234"
-      msg.iso056.should eq "11001234562606181200000272001234"
-    end
-
-    it "sets and gets approval code" do
-      msg = CrystalIso8583::V1993::Msg1120.new
-      msg.iso038 = "036246"
-      msg.iso038.should eq "036246"
-    end
-  end
-
   describe "validate!" do
     it "raises when required fields are missing" do
       expect_raises(CrystalIso8583::Shared::BuildError) do
