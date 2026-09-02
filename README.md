@@ -91,10 +91,10 @@ caught at compile time; missing required fields are caught when you call `build`
 ```crystal
 require "crystal_iso8583"
 
-codec = CrystalIso8583::Shared::Codec::ASCII.new
+codec = CrystalISO8583::Shared::Codec::ASCII.new
 
 # Build a 1100 authorization request
-bytes = CrystalIso8583::V1993::Msg1100.new.tap do |m|
+bytes = CrystalISO8583::V1993::Msg1100.new.tap do |m|
   m.iso002 = "434971******1380"  # PAN
   m.iso003 = "310000"            # Processing Code
   m.iso004 = "000000000000"      # Amount
@@ -103,7 +103,7 @@ bytes = CrystalIso8583::V1993::Msg1100.new.tap do |m|
 end.build(codec)
 
 # Parse an incoming response
-response = CrystalIso8583::V1993::Msg1110.parse(bytes, codec)
+response = CrystalISO8583::V1993::Msg1110.parse(bytes, codec)
 puts response.iso039  # Response Code
 puts response.iso038  # Authorization ID Response
 ```
@@ -116,11 +116,11 @@ When you need to work with arbitrary or unknown MTIs, use the lower-level
 ```crystal
 require "crystal_iso8583"
 
-dict  = CrystalIso8583::V1993::DataDictionary.fields
-codec = CrystalIso8583::Shared::Codec::ASCII.new
+dict  = CrystalISO8583::V1993::DataDictionary.fields
+codec = CrystalISO8583::Shared::Codec::ASCII.new
 
-bytes  = CrystalIso8583::Shared::Builder.new(dict, codec).build(message)
-parsed = CrystalIso8583::Shared::Parser.new(dict, codec).parse(bytes)
+bytes  = CrystalISO8583::Shared::Builder.new(dict, codec).build(message)
+parsed = CrystalISO8583::Shared::Parser.new(dict, codec).parse(bytes)
 puts parsed.fields[39]  # Response Code by field number
 ```
 
@@ -133,14 +133,14 @@ prefixes, numeric fields, and text fields:
 ```crystal
 require "crystal_iso8583"
 
-codec = CrystalIso8583::Shared::Codec::Configurable.new(
-  mti_encoding: CrystalIso8583::Shared::Codec::MtiEncoding::BCD,
-  length_encoding: CrystalIso8583::Shared::Codec::LengthEncoding::Binary,
-  numeric_encoding: CrystalIso8583::Shared::Codec::NumericEncoding::BCD,
-  text_encoding: CrystalIso8583::Shared::Codec::TextEncoding::EBCDIC,
+codec = CrystalISO8583::Shared::Codec::Configurable.new(
+  mti_encoding: CrystalISO8583::MtiEncoding::BCD,
+  length_encoding: CrystalISO8583::LengthEncoding::Binary,
+  numeric_encoding: CrystalISO8583::NumericEncoding::BCD,
+  text_encoding: CrystalISO8583::TextEncoding::EBCDIC,
 )
 
-bytes = CrystalIso8583::V1987::Msg0100.new.tap do |m|
+bytes = CrystalISO8583::V1987::Msg0100.new.tap do |m|
   m.iso002 = "434971******1380"
   m.iso003 = "310000"
   m.iso004 = "000000000000"
@@ -156,7 +156,7 @@ Header strategies handle stripping and re-wrapping that envelope:
 ```crystal
 require "crystal_iso8583"
 
-framing = CrystalIso8583::Shared::Header::AsciiLengthPrefix.new(digits: 4)
+framing = CrystalISO8583::Shared::Header::AsciiLengthPrefix.new(digits: 4)
 
 framed = framing.wrap(bytes)        # prepend a 4-digit ASCII length prefix
 payload = framing.strip(framed)     # recover the raw ISO 8583 message

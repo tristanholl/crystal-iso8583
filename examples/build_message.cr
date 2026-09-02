@@ -73,7 +73,7 @@ payload = if !add_header
           elsif scheme == "visa"
             Bytes.new(Scheme::VISA_HEADER_SIZE) + iso_bytes
           else
-            CrystalIso8583::Shared::Header::AsciiLengthPrefix.new(NETWORK_HEADER_SIZE).wrap(iso_bytes)
+            CrystalISO8583::Shared::Header::AsciiLengthPrefix.new(NETWORK_HEADER_SIZE).wrap(iso_bytes)
           end
 
 Dir.mkdir_p(File.dirname(output_path))

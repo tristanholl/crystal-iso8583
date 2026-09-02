@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     # Shared packed Binary Coded Decimal helpers used by Codec::BCD and Codec::Configurable.
     module BCDUtil

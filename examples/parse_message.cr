@@ -58,16 +58,16 @@ unless ["1987", "1993"].includes?(version)
   exit 1
 end
 
-header_strategy = CrystalIso8583::Shared::Header::FixedLength.new(header_size)
+header_strategy = CrystalISO8583::Shared::Header::FixedLength.new(header_size)
 
 Dir[input_glob].each do |input_file|
   puts "Processing #{input_file}..."
   raw = File.open(input_file, "rb") { |f| f.getb_to_end }
   bytes = header_strategy.strip(raw)
   msg = if version == "1987"
-          CrystalIso8583::V1987::Msg0100.parse(bytes, codec, debug)
+          CrystalISO8583::V1987::Msg0100.parse(bytes, codec, debug)
         else
-          CrystalIso8583::V1993::Msg1100.parse(bytes, codec, debug)
+          CrystalISO8583::V1993::Msg1100.parse(bytes, codec, debug)
         end
   output_file = File.join(output_dir, File.basename(input_file).sub(/\.in$/, ".json"))
   File.write(output_file, msg.to_json)

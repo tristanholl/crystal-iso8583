@@ -1,6 +1,6 @@
 require "json"
 
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     class Message
       getter mti : MTI

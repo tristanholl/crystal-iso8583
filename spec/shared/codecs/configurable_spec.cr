@@ -1,23 +1,23 @@
 require "../../spec_helper"
 
-private alias Configurable = CrystalIso8583::Shared::Codec::Configurable
-private alias MtiEncoding = CrystalIso8583::Shared::Codec::MtiEncoding
-private alias NumericEncoding = CrystalIso8583::Shared::Codec::NumericEncoding
-private alias TextEncoding = CrystalIso8583::Shared::Codec::TextEncoding
-private alias LengthEncoding = CrystalIso8583::Shared::Codec::LengthEncoding
-private alias DataType = CrystalIso8583::Shared::DataType
+private alias Configurable = CrystalISO8583::Shared::Codec::Configurable
+private alias MtiEncoding = CrystalISO8583::MtiEncoding
+private alias NumericEncoding = CrystalISO8583::NumericEncoding
+private alias TextEncoding = CrystalISO8583::TextEncoding
+private alias LengthEncoding = CrystalISO8583::LengthEncoding
+private alias DataType = CrystalISO8583::Shared::DataType
 
 describe Configurable do
   describe "mti" do
     it "round-trips ASCII MTI" do
       codec = Configurable.new(mti_encoding: MtiEncoding::ASCII)
-      mti = CrystalIso8583::Shared::MTI.parse("0100")
+      mti = CrystalISO8583::Shared::MTI.parse("0100")
       codec.decode_mti(codec.encode_mti(mti)).to_s.should eq "0100"
     end
 
     it "round-trips BCD MTI" do
       codec = Configurable.new(mti_encoding: MtiEncoding::BCD)
-      mti = CrystalIso8583::Shared::MTI.parse("0100")
+      mti = CrystalISO8583::Shared::MTI.parse("0100")
       encoded = codec.encode_mti(mti)
       encoded.size.should eq 2
       codec.decode_mti(encoded).to_s.should eq "0100"
@@ -25,7 +25,7 @@ describe Configurable do
 
     it "round-trips EBCDIC MTI" do
       codec = Configurable.new(mti_encoding: MtiEncoding::EBCDIC)
-      mti = CrystalIso8583::Shared::MTI.parse("0100")
+      mti = CrystalISO8583::Shared::MTI.parse("0100")
       codec.decode_mti(codec.encode_mti(mti)).to_s.should eq "0100"
     end
   end

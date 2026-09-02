@@ -1,6 +1,6 @@
 require "json"
 
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     abstract class TypedMessage
       abstract def mti_string : String

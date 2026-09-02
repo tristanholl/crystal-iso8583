@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1987
     # Authorization Advice Repeat — identical field set to Msg0120.
     # Repeats are identical to the respective advice with the exception of

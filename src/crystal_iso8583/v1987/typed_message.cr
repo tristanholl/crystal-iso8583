@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1987
     abstract class TypedMessage < Shared::TypedMessage
       def validate! : Nil

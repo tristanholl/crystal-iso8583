@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     # Strategies for stripping/wrapping transport-layer framing that sits in
     # front of the actual ISO 8583 message (TPDUs, proprietary network

@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-private class TestMsg < CrystalIso8583::Shared::TypedMessage
+private class TestMsg < CrystalISO8583::Shared::TypedMessage
   mti "9999"
 
   field iso002, id: 2, required: true
@@ -8,7 +8,7 @@ private class TestMsg < CrystalIso8583::Shared::TypedMessage
   field iso004, id: 4
 end
 
-describe CrystalIso8583::Shared::TypedMessage do
+describe CrystalISO8583::Shared::TypedMessage do
   describe "field macro" do
     it "generates a getter that returns nil when unset" do
       msg = TestMsg.new
@@ -55,7 +55,7 @@ describe CrystalIso8583::Shared::TypedMessage do
     end
 
     it "is isolated per class" do
-      TestMsg.new.field_meta.should_not eq CrystalIso8583::V1993::Msg1100.new.field_meta
+      TestMsg.new.field_meta.should_not eq CrystalISO8583::V1993::Msg1100.new.field_meta
     end
   end
 
@@ -67,7 +67,7 @@ describe CrystalIso8583::Shared::TypedMessage do
 
   describe "validate!" do
     it "raises BuildError when required fields are missing" do
-      expect_raises(CrystalIso8583::Shared::BuildError) do
+      expect_raises(CrystalISO8583::Shared::BuildError) do
         TestMsg.new.validate!
       end
     end

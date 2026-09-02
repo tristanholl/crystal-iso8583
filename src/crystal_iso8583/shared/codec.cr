@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     module Codec
       abstract def encode_mti(mti : MTI) : Bytes

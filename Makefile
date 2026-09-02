@@ -37,8 +37,10 @@ dev: build ## Launch development environment
 test: build ## Run test suite
 	$(call dct, run --rm cmd -c "crystal spec spec/")
 
-lint: build ## Run formatter check
+lint: shards ## Run formatter check and linter
 	$(call dc-run, crystal tool format --check src/ spec/)
+	$(call dc-run, [ -x bin/ameba ] || shards build ameba --release)
+	$(call dc-run, bin/ameba)
 
 shards: build ## Install shards (dependencies)
 	$(call dc-run, shards install)

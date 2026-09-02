@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     module Codec
       # Per-concern wire encodings used by Codec::Configurable. Split into
@@ -37,4 +37,12 @@ module CrystalIso8583
       end
     end
   end
+
+  # Shorter top-level aliases for the Codec sub-encodings, so callers can
+  # write `CrystalISO8583::MtiEncoding::BCD` instead of the fully qualified
+  # `CrystalISO8583::Shared::Codec::MtiEncoding::BCD`.
+  alias MtiEncoding = Shared::Codec::MtiEncoding
+  alias NumericEncoding = Shared::Codec::NumericEncoding
+  alias TextEncoding = Shared::Codec::TextEncoding
+  alias LengthEncoding = Shared::Codec::LengthEncoding
 end

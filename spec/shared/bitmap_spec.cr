@@ -1,4 +1,4 @@
 require "../spec_helper"
 
-describe CrystalIso8583::Shared::Bitmap do
+describe CrystalISO8583::Shared::Bitmap do
 end

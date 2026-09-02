@@ -1,4 +1,4 @@
 require "../spec_helper"
 
-describe CrystalIso8583::V1987::DataDictionary do
+describe CrystalISO8583::V1987::DataDictionary do
 end
