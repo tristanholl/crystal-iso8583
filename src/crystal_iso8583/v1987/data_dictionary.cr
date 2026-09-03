@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1987
     module DataDictionary
       # Modeled on VisaNet BASE I, which deviates from the generic ISO

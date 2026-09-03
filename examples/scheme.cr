@@ -7,11 +7,11 @@ module Scheme
   VISA_CODEC_NAME  = "configurable"
   VISA_HEADER_SIZE = 22
 
-  def self.build_codec(codec_name : String) : CrystalIso8583::Shared::Codec
+  def self.build_codec(codec_name : String) : CrystalISO8583::Shared::Codec
     case codec_name
-    when "ascii"        then CrystalIso8583::Shared::Codec::ASCII.new
-    when "bcd"          then CrystalIso8583::Shared::Codec::BCD.new
-    when "ebcdic"       then CrystalIso8583::Shared::Codec::EBCDIC.new
+    when "ascii"        then CrystalISO8583::Shared::Codec::ASCII.new
+    when "bcd"          then CrystalISO8583::Shared::Codec::BCD.new
+    when "ebcdic"       then CrystalISO8583::Shared::Codec::EBCDIC.new
     when "configurable" then visa_configurable_codec
     else
       STDERR.puts "Unknown codec: #{codec_name} (expected ascii, bcd, ebcdic, or configurable)"
@@ -19,19 +19,19 @@ module Scheme
     end
   end
 
-  def self.visa_configurable_codec : CrystalIso8583::Shared::Codec::Configurable
-    CrystalIso8583::Shared::Codec::Configurable.new(
-      mti_encoding: CrystalIso8583::Shared::Codec::MtiEncoding::BCD,
-      length_encoding: CrystalIso8583::Shared::Codec::LengthEncoding::Binary,
-      numeric_encoding: CrystalIso8583::Shared::Codec::NumericEncoding::BCD,
-      text_encoding: CrystalIso8583::Shared::Codec::TextEncoding::EBCDIC,
+  def self.visa_configurable_codec : CrystalISO8583::Shared::Codec::Configurable
+    CrystalISO8583::Shared::Codec::Configurable.new(
+      mti_encoding: CrystalISO8583::MtiEncoding::BCD,
+      length_encoding: CrystalISO8583::LengthEncoding::Binary,
+      numeric_encoding: CrystalISO8583::NumericEncoding::BCD,
+      text_encoding: CrystalISO8583::TextEncoding::EBCDIC,
     )
   end
 
   record Resolved,
     version : String,
     codec_name : String,
-    codec : CrystalIso8583::Shared::Codec,
+    codec : CrystalISO8583::Shared::Codec,
     header_size : Int32?
 
   def self.resolve(

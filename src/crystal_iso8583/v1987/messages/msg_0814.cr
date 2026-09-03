@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1987
     # Network Management Response — "other" origin (digit 4 = 4).
     class Msg0814 < TypedMessage

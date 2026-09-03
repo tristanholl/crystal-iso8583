@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     # IBM EBCDIC Code Page 037 (US/Canada) ↔ ISO-8859-1 conversion tables.
     # Index into TO_ASCII is the EBCDIC byte value; the element is the ASCII byte.

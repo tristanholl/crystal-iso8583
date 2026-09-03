@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     class Builder
       def initialize(@dictionary : Hash(Int32, FieldDescriptor), @codec : Codec)

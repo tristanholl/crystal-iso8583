@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1993
     # Abstract base for all V1993 typed messages.
     # Wires the DataDictionary into build/parse so callers only pass a codec.

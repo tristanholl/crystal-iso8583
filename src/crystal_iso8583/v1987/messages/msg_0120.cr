@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1987
     class Msg0120 < TypedMessage
       mti "0120"

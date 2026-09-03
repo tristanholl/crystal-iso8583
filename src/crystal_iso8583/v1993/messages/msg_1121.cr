@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1993
     # Authorisation Advice Repeat — identical field set to Msg1120.
     # Spec: "Advice Repeats are identical to the respective Advices with

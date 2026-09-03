@@ -1,21 +1,21 @@
 require "../../spec_helper"
 
-describe CrystalIso8583::V1993::Msg1100 do
+describe CrystalISO8583::V1993::Msg1100 do
   describe "mti_string" do
     it "is 1100" do
-      CrystalIso8583::V1993::Msg1100.new.mti_string.should eq "1100"
+      CrystalISO8583::V1993::Msg1100.new.mti_string.should eq "1100"
     end
   end
 
   describe "validate!" do
     it "raises when required fields are missing" do
-      expect_raises(CrystalIso8583::Shared::BuildError) do
-        CrystalIso8583::V1993::Msg1100.new.validate!
+      expect_raises(CrystalISO8583::Shared::BuildError) do
+        CrystalISO8583::V1993::Msg1100.new.validate!
       end
     end
 
     it "passes when all mandatory fields are set" do
-      msg = CrystalIso8583::V1993::Msg1100.new
+      msg = CrystalISO8583::V1993::Msg1100.new
       msg.iso002 = "4111111111111111"
       msg.iso003 = "000000"
       msg.iso007 = "0618120000"
@@ -36,8 +36,8 @@ describe CrystalIso8583::V1993::Msg1100 do
 
   describe "field_meta isolation" do
     it "does not share FIELD_META with Msg1110" do
-      m1100_ids = CrystalIso8583::V1993::Msg1100.new.field_meta.keys.sort
-      m1110_ids = CrystalIso8583::V1993::Msg1110.new.field_meta.keys.sort
+      m1100_ids = CrystalISO8583::V1993::Msg1100.new.field_meta.keys.sort
+      m1110_ids = CrystalISO8583::V1993::Msg1110.new.field_meta.keys.sort
       m1100_ids.should_not eq m1110_ids
     end
   end

@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module Shared
     enum FieldEncoding
       FIXED   # fixed-length field

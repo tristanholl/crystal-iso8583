@@ -1,4 +1,4 @@
-module CrystalIso8583
+module CrystalISO8583
   module V1993
     module MessageFactory
       def self.build_0100 : Shared::Message

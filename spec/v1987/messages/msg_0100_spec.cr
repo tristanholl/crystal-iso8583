@@ -1,21 +1,21 @@
 require "../../spec_helper"
 
-describe CrystalIso8583::V1987::Msg0100 do
+describe CrystalISO8583::V1987::Msg0100 do
   describe "mti_string" do
     it "is 0100" do
-      CrystalIso8583::V1987::Msg0100.new.mti_string.should eq "0100"
+      CrystalISO8583::V1987::Msg0100.new.mti_string.should eq "0100"
     end
   end
 
   describe "validate!" do
     it "raises when required fields are missing" do
-      expect_raises(CrystalIso8583::Shared::BuildError) do
-        CrystalIso8583::V1987::Msg0100.new.validate!
+      expect_raises(CrystalISO8583::Shared::BuildError) do
+        CrystalISO8583::V1987::Msg0100.new.validate!
       end
     end
 
     it "passes when all mandatory fields are set" do
-      msg = CrystalIso8583::V1987::Msg0100.new
+      msg = CrystalISO8583::V1987::Msg0100.new
       msg.iso002 = "4111111111111111"
       msg.iso003 = "000000"
       msg.iso004 = "000000001000"
@@ -34,7 +34,7 @@ describe CrystalIso8583::V1987::Msg0100 do
 
   describe "build and parse round-trip" do
     it "round-trips with ASCII codec" do
-      msg = CrystalIso8583::V1987::Msg0100.new
+      msg = CrystalISO8583::V1987::Msg0100.new
       msg.iso002 = "4111111111111111"
       msg.iso003 = "000000"
       msg.iso004 = "000000001000"
@@ -49,9 +49,9 @@ describe CrystalIso8583::V1987::Msg0100 do
       msg.iso049 = "840"
       msg.iso043 = "MyShop          Berlin          DE"
 
-      codec = CrystalIso8583::Shared::Codec::ASCII.new
+      codec = CrystalISO8583::Shared::Codec::ASCII.new
       bytes = msg.build(codec)
-      parsed = CrystalIso8583::V1987::Msg0100.parse(bytes, codec)
+      parsed = CrystalISO8583::V1987::Msg0100.parse(bytes, codec)
 
       parsed.iso002.should eq "4111111111111111"
       parsed.iso003.should eq "000000"
@@ -67,7 +67,7 @@ describe CrystalIso8583::V1987::Msg0100 do
     end
 
     it "round-trips with EBCDIC codec" do
-      msg = CrystalIso8583::V1987::Msg0100.new
+      msg = CrystalISO8583::V1987::Msg0100.new
       msg.iso002 = "4111111111111111"
       msg.iso003 = "000000"
       msg.iso004 = "000000001000"
@@ -81,9 +81,9 @@ describe CrystalIso8583::V1987::Msg0100 do
       msg.iso042 = "MERCH001       "
       msg.iso049 = "840"
 
-      codec = CrystalIso8583::Shared::Codec::EBCDIC.new
+      codec = CrystalISO8583::Shared::Codec::EBCDIC.new
       bytes = msg.build(codec)
-      parsed = CrystalIso8583::V1987::Msg0100.parse(bytes, codec)
+      parsed = CrystalISO8583::V1987::Msg0100.parse(bytes, codec)
 
       parsed.iso002.should eq "4111111111111111"
       parsed.iso003.should eq "000000"
@@ -95,8 +95,8 @@ describe CrystalIso8583::V1987::Msg0100 do
 
   describe "field_meta isolation" do
     it "does not share FIELD_META with V1993::Msg1100" do
-      v1987_ids = CrystalIso8583::V1987::Msg0100.new.field_meta.keys.sort
-      v1993_ids = CrystalIso8583::V1993::Msg1100.new.field_meta.keys.sort
+      v1987_ids = CrystalISO8583::V1987::Msg0100.new.field_meta.keys.sort
+      v1993_ids = CrystalISO8583::V1993::Msg1100.new.field_meta.keys.sort
       v1987_ids.should_not eq v1993_ids
     end
   end
